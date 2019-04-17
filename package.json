@@ -29,6 +29,7 @@
     "@material-ui/core": "^3.9.3",
     "axios": "^0.18.0",
     "commander": "^2.20.0",
+    "d3": "^5.9.2",
     "dependency-cruiser": "^4.15.3",
     "dependency-tree": "^7.0.2",
     "directory-tree": "^2.2.1",

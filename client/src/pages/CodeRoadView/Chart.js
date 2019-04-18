@@ -1,21 +1,21 @@
 import { select, event } from 'd3'
 import { hierarchy, cluster } from 'd3-hierarchy'
 
-const width = 600
 const margin = {
   left: 0,
+  right: 0,
   top: 0,
   bottom: 0
 }
 
 function tree(data) {
   const root = hierarchy(data)
-  console.log(root)
   root.sort(
     (a, b) => a.height - b.height || a.data.name.localeCompare(b.data.name)
   )
-  root.dx = 15
-  root.dy = width / (root.height + 1)
+  root.dx = 25
+  // root.dy = width / (root.height + 1)
+  root.dy = 200
   return cluster().nodeSize([root.dx, root.dy])(root)
 }
 
@@ -85,25 +85,27 @@ export function clusterChart(domsvg, data) {
   return svg.node()
 }
 
-export function collapseClusterChart(domsvg, data) {
+export function collapseClusterChart(domsvg, data, size) {
+  const {width, height} = size
   const root = tree(data)
+  console.log(root)
 
   // root.x0 = root.dy / 2
   // root.y0 = 0
   root.descendants().forEach((d, i) => {
     d.id = i
     d._children = d.children
-    if (d.depth && d.data.name.length !== 7) d.children = null
+    if (d.depth ) d.children = null
   })
 
   const svg = select(domsvg)
-    .style('width', '100%')
-    .style('height', 'auto')
-    .attr('viewBox', [-margin.left, -margin.top, width, root.dx])
+    .attr('width', width)
+    .attr('height', height)
+    .attr('viewBox', [-margin.left, -margin.top, width, height])
     .append('g')
-    .style('font', '6px sans-serif')
+    .style('font', '14px sans-serif')
     .style('user-select', 'none')
-    .attr('transform', `translate(${root.dy},${root.dx})`)
+    .attr('transform', `translate(${root.dy},${height/2})`)
 
   const gLink = svg
     .append('g')
@@ -117,11 +119,8 @@ export function collapseClusterChart(domsvg, data) {
   function update(source) {
     const duration = event && event.altKey ? 2500 : 250
     cluster().nodeSize([root.dx, root.dy])(root)
-    const nodes = root.descendants().reverse()
+    const nodes = root.descendants()
     const links = root.links()
-
-    // Compute the new tree layout.
-    // d3.cluster().size([600, 600])(root);
 
     let left = root
     let right = root
@@ -135,8 +134,6 @@ export function collapseClusterChart(domsvg, data) {
     const transition = svg
       .transition()
       .duration(duration)
-      .attr('height', height)
-      .attr('viewBox', [-margin.left, left.x - margin.top, width, height])
       .tween(
         'resize',
         window.ResizeObserver ? null : () => () => svg.dispatch('toggle')
@@ -149,8 +146,6 @@ export function collapseClusterChart(domsvg, data) {
     const nodeEnter = node
       .enter()
       .append('g')
-    .attr('transform', `translate(${root.dy},${root.dx})`)
-      // .attr('transform', d => `translate(${source.y0},${source.x0})`)
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
       .on('click', d => {
@@ -172,9 +167,6 @@ export function collapseClusterChart(domsvg, data) {
       .text(d => d.data.name)
       .clone(true)
       .lower()
-      // .attr('stroke-linejoin', 'round')
-      // .attr('stroke-width', 1.5)
-      // .attr('stroke', 'white')
 
     // Transition nodes to their new position.
     const nodeUpdate = node
@@ -187,9 +179,7 @@ export function collapseClusterChart(domsvg, data) {
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node
       .exit()
-      .transition(transition)
       .remove()
-      // .attr('transform', d => `translate(${source.y},${source.x})`)
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
 
@@ -209,10 +199,6 @@ export function collapseClusterChart(domsvg, data) {
          ${d.source.y},${d.source.x}
       `
       )
-    // .attr("d", d => {
-    //   const o = {x: source.x0, y: source.y0};
-    //   return diagonal({source: o, target: o});
-    // });
 
     // Transition links to their new position.
     link
@@ -227,12 +213,11 @@ export function collapseClusterChart(domsvg, data) {
          ${d.source.y},${d.source.x}
       `
       )
-    // .attr("d", diagonal);
 
     // Transition exiting nodes to the parent's new position.
     link
       .exit()
-      .transition(transition)
+      // .transition(transition)
       .remove()
       .attr(
         'd',
@@ -243,10 +228,6 @@ export function collapseClusterChart(domsvg, data) {
          ${d.source.y},${d.source.x}
       `
       )
-    // .attr("d", d => {
-    //   const o = {x: source.x, y: source.y};
-    //   return diagonal({source: o, target: o});
-    // });
 
     // Stash the old positions for transition.
     root.eachBefore(d => {

@@ -11,6 +11,7 @@ export default class CodeRoadView extends Component {
       dirTree: {}
     }
 
+    this.containerSvg
     this.svg
     this.getDirTree()
   }
@@ -18,6 +19,10 @@ export default class CodeRoadView extends Component {
   componentDidMount() {
     // const { dirTree } = this.state
     // this.chart(this.svg, dirTree)
+  }
+
+  componentDidUpdate(){
+
   }
 
   async getDirTree() {
@@ -33,13 +38,13 @@ export default class CodeRoadView extends Component {
 
   render() {
     const { dirTree } = this.state
-    if (this.svg) {
-      console.log(this.svg)
-      collapseClusterChart(this.svg, dirTree)
+    if (this.svg && this.containerSvg) {
+      let size = this.containerSvg.getBoundingClientRect()
+      collapseClusterChart(this.svg, dirTree, size)
     }
     return (
       <div className="CodeRoadMainContainer">
-        <div className="CodeRoadMainChart">
+        <div className="CodeRoadMainChart" ref={ele => this.containerSvg = ele}>
           <svg
             width={600}
             height={600}

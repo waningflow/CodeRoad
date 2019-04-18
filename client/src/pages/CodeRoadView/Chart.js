@@ -101,14 +101,14 @@ export function collapseClusterChart(domsvg, data) {
     .style('height', 'auto')
     .attr('viewBox', [-margin.left, -margin.top, width, root.dx])
     .append('g')
-    .style('font', '8px sans-serif')
+    .style('font', '6px sans-serif')
     .style('user-select', 'none')
     .attr('transform', `translate(${root.dy},${root.dx})`)
 
   const gLink = svg
     .append('g')
     .attr('fill', 'none')
-    .attr('stroke', '#555')
+    .attr('stroke', '#999')
     .attr('stroke-opacity', 0.4)
     .attr('stroke-width', 0.5)
 
@@ -166,14 +166,15 @@ export function collapseClusterChart(domsvg, data) {
     nodeEnter
       .append('text')
       .attr('dy', '0.31em')
+      .attr('fill', '#fff')
       .attr('x', d => (d._children ? -6 : 6))
       .attr('text-anchor', d => (d._children ? 'end' : 'start'))
       .text(d => d.data.name)
       .clone(true)
       .lower()
-      .attr('stroke-linejoin', 'round')
-      .attr('stroke-width', 1.5)
-      .attr('stroke', 'white')
+      // .attr('stroke-linejoin', 'round')
+      // .attr('stroke-width', 1.5)
+      // .attr('stroke', 'white')
 
     // Transition nodes to their new position.
     const nodeUpdate = node

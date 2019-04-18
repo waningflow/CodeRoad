@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import {clusterChart, collapseClusterChart} from './Chart'
+import './CodeRoadView.css'
 
 export default class CodeRoadView extends Component {
   constructor(props) {
@@ -37,11 +38,11 @@ export default class CodeRoadView extends Component {
       collapseClusterChart(this.svg, dirTree)
     }
     return (
-      <div>
-        <div>
+      <div className="CodeRoadMainContainer">
+        <div className="CodeRoadMainChart">
           <svg
             width={600}
-            height={1600}
+            height={600}
             ref={element => (this.svg = element)}
           />
           {/* {JSON.stringify(dirTree)} */}

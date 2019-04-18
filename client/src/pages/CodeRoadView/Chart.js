@@ -1,4 +1,4 @@
-import { select, event } from 'd3'
+import { select, event, zoom } from 'd3'
 import { hierarchy, cluster } from 'd3-hierarchy'
 
 const margin = {
@@ -86,26 +86,54 @@ export function clusterChart(domsvg, data) {
 }
 
 export function collapseClusterChart(domsvg, data, size) {
-  const {width, height} = size
-  const root = tree(data)
+  const { width, height } = size
+  let root = hierarchy(data)
+  root.sort(
+    (a, b) => a.height - b.height || a.data.name.localeCompare(b.data.name)
+  )
+  root.dx = 25
+  // root.dy = width / (root.height + 1)
+  root.dy = 200
+
+  // const root = tree(data)
+  root.x0 = height / 2
+  root.y0 = root.dy
+  cluster().nodeSize([root.dx, root.dy])(root)
   console.log(root)
 
-  // root.x0 = root.dy / 2
-  // root.y0 = 0
   root.descendants().forEach((d, i) => {
     d.id = i
     d._children = d.children
-    if (d.depth ) d.children = null
+    if (d.depth >= 2) d.children = null
   })
 
   const svg = select(domsvg)
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', [-margin.left, -margin.top, width, height])
+    .call(
+      zoom()
+        .scaleExtent([0.3, 3])
+        .on('zoom', function() {
+          svg.attr('transform', event.transform)
+          svg.attr(
+            'transform',
+            'translate(' +
+              (event.transform.x + event.transform.k*root.dy) +
+              ',' +
+              (event.transform.y + event.transform.k*height / 2) +
+              ') scale(' +
+              event.transform.k +
+              ')'
+          )
+        })
+    )
     .append('g')
     .style('font', '14px sans-serif')
     .style('user-select', 'none')
-    .attr('transform', `translate(${root.dy},${height/2})`)
+    .attr('transform', `translate(0,0)`)
+  .attr('transform', `translate(${root.dy},${height / 2})`)
+  // .call(zoom)
 
   const gLink = svg
     .append('g')
@@ -121,15 +149,6 @@ export function collapseClusterChart(domsvg, data, size) {
     cluster().nodeSize([root.dx, root.dy])(root)
     const nodes = root.descendants()
     const links = root.links()
-
-    let left = root
-    let right = root
-    root.eachBefore(node => {
-      if (node.x < left.x) left = node
-      if (node.x > right.x) right = node
-    })
-
-    const height = right.x - left.x + margin.top + margin.bottom
 
     const transition = svg
       .transition()
@@ -169,7 +188,7 @@ export function collapseClusterChart(domsvg, data, size) {
       .lower()
 
     // Transition nodes to their new position.
-    const nodeUpdate = node
+    node
       .merge(nodeEnter)
       .transition(transition)
       .attr('transform', d => `translate(${d.y},${d.x})`)
@@ -177,7 +196,7 @@ export function collapseClusterChart(domsvg, data, size) {
       .attr('stroke-opacity', 1)
 
     // Transition exiting nodes to the parent's new position.
-    const nodeExit = node
+    node
       .exit()
       .remove()
       .attr('fill-opacity', 0)

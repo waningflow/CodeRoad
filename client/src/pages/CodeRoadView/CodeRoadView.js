@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import {clusterChart, collapseClusterChart} from './Chart'
+import { clusterChart, collapseClusterChart } from './Chart'
 import './CodeRoadView.css'
 
 export default class CodeRoadView extends Component {
@@ -8,12 +8,12 @@ export default class CodeRoadView extends Component {
     super(props)
 
     this.state = {
-      dirTree: {}
+      dirTree: {},
+      depCruise: {}
     }
 
     this.containerSvg
-    this.svg
-    this.getDirTree()
+    this.initData()
   }
 
   componentDidMount() {
@@ -21,19 +21,26 @@ export default class CodeRoadView extends Component {
     // this.chart(this.svg, dirTree)
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {}
 
-  }
-
-  async getDirTree() {
-    let options = {
-      method: 'get',
-      url: 'http://localhost:3450/data'
+  async initData() {
+    try {
+      let [res_dir, res_dep] = await Promise.all(
+        ['dirtree', 'depcruise'].map(async v => {
+          let res = await axios({
+            method: 'GET',
+            url: `http://localhost:3450/${v}`
+          })
+          return res.data
+        })
+      )
+      this.setState({
+        dirTree: res_dir,
+        depCruise: res_dep
+      })
+    } catch (e) {
+      console.log(e)
     }
-    let res = await axios(options)
-    this.setState({
-      dirTree: res.data
-    })
   }
 
   render() {
@@ -44,12 +51,11 @@ export default class CodeRoadView extends Component {
     }
     return (
       <div className="CodeRoadMainContainer">
-        <div className="CodeRoadMainChart" ref={ele => this.containerSvg = ele}>
-          <svg
-            width={600}
-            height={600}
-            ref={element => (this.svg = element)}
-          />
+        <div
+          className="CodeRoadMainChart"
+          ref={ele => (this.containerSvg = ele)}
+        >
+          <svg width={600} height={600} ref={element => (this.svg = element)} />
           {/* {JSON.stringify(dirTree)} */}
         </div>
       </div>

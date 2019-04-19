@@ -92,10 +92,8 @@ export function collapseClusterChart(domsvg, data, size) {
     (a, b) => a.height - b.height || a.data.name.localeCompare(b.data.name)
   )
   root.dx = 25
-  // root.dy = width / (root.height + 1)
   root.dy = 200
 
-  // const root = tree(data)
   root.x0 = height / 2
   root.y0 = root.dy
   cluster().nodeSize([root.dx, root.dy])(root)
@@ -104,7 +102,7 @@ export function collapseClusterChart(domsvg, data, size) {
   root.descendants().forEach((d, i) => {
     d.id = i
     d._children = d.children
-    if (d.depth >= 2) d.children = null
+    if (d.depth >= 1) d.children = null
   })
 
   const svg = select(domsvg)
@@ -119,9 +117,9 @@ export function collapseClusterChart(domsvg, data, size) {
           svg.attr(
             'transform',
             'translate(' +
-              (event.transform.x + event.transform.k*root.dy) +
+              (event.transform.x + event.transform.k * root.dy) +
               ',' +
-              (event.transform.y + event.transform.k*height / 2) +
+              (event.transform.y + (event.transform.k * height) / 2) +
               ') scale(' +
               event.transform.k +
               ')'
@@ -132,7 +130,7 @@ export function collapseClusterChart(domsvg, data, size) {
     .style('font', '14px sans-serif')
     .style('user-select', 'none')
     .attr('transform', `translate(0,0)`)
-  .attr('transform', `translate(${root.dy},${height / 2})`)
+    .attr('transform', `translate(${root.dy},${height / 2})`)
   // .call(zoom)
 
   const gLink = svg
@@ -144,7 +142,7 @@ export function collapseClusterChart(domsvg, data, size) {
 
   const gNode = svg.append('g').attr('cursor', 'pointer')
 
-  function update(source) {
+  function update() {
     const duration = event && event.altKey ? 2500 : 250
     cluster().nodeSize([root.dx, root.dy])(root)
     const nodes = root.descendants()
@@ -169,6 +167,7 @@ export function collapseClusterChart(domsvg, data, size) {
       .attr('stroke-opacity', 0)
       .on('click', d => {
         d.children = d.children ? null : d._children
+        console.log(d.data.name)
         update(d)
       })
 

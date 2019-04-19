@@ -1,90 +1,6 @@
 import { select, event, zoom } from 'd3'
 import { hierarchy, cluster } from 'd3-hierarchy'
 
-const margin = {
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0
-}
-
-function tree(data) {
-  const root = hierarchy(data)
-  root.sort(
-    (a, b) => a.height - b.height || a.data.name.localeCompare(b.data.name)
-  )
-  root.dx = 25
-  // root.dy = width / (root.height + 1)
-  root.dy = 200
-  return cluster().nodeSize([root.dx, root.dy])(root)
-}
-
-export function clusterChart(domsvg, data) {
-  const root = tree(data)
-  console.log(root)
-  let x0 = Infinity
-  let x1 = -x0
-  root.each(d => {
-    if (d.x > x1) x1 = d.x
-    if (d.x < x0) x0 = d.x
-  })
-
-  const svg = select(domsvg)
-    .style('width', '100%')
-    .style('height', 'auto')
-
-  const g = svg
-    .append('g')
-    .attr('font-family', 'sans-serif')
-    .attr('font-size', 10)
-    .attr('transform', `translate(${root.dy / 3},${root.dx - x0})`)
-
-  g.append('g')
-    .attr('fill', 'none')
-    .attr('stroke', '#555')
-    .attr('stroke-opacity', 0.4)
-    .attr('stroke-width', 1.5)
-    .selectAll('path')
-    .data(root.links())
-    .join('path')
-    .attr(
-      'd',
-      d => `
-        M${d.target.y},${d.target.x}
-        C${d.source.y + root.dy / 2},${d.target.x}
-         ${d.source.y + root.dy / 2},${d.source.x}
-         ${d.source.y},${d.source.x}
-      `
-    )
-
-  const node = g
-    .append('g')
-    .attr('stroke-linejoin', 'round')
-    .attr('stroke-width', 3)
-    .selectAll('g')
-    .data(root.descendants().reverse())
-    .join('g')
-    .attr('transform', d => `translate(${d.y},${d.x})`)
-
-  node
-    .append('circle')
-    .attr('fill', d => (d.children ? '#555' : '#999'))
-    .attr('r', 2.5)
-
-  node
-    .append('text')
-    .attr('dy', '0.31em')
-    .attr('x', d => (d.children ? -6 : 6))
-    .text(d => d.data.name)
-    .filter(d => d.children)
-    .attr('text-anchor', 'end')
-    .clone(true)
-    .lower()
-    .attr('stroke', 'white')
-
-  return svg.node()
-}
-
 export function collapseClusterChart(domsvg, data, size) {
   const { width, height } = size
   let root = hierarchy(data)
@@ -108,7 +24,7 @@ export function collapseClusterChart(domsvg, data, size) {
   const svg = select(domsvg)
     .attr('width', width)
     .attr('height', height)
-    .attr('viewBox', [-margin.left, -margin.top, width, height])
+    .attr('viewBox', [0, 0, width, height])
     .call(
       zoom()
         .scaleExtent([0.3, 3])
@@ -235,7 +151,6 @@ export function collapseClusterChart(domsvg, data, size) {
     // Transition exiting nodes to the parent's new position.
     link
       .exit()
-      // .transition(transition)
       .remove()
       .attr(
         'd',

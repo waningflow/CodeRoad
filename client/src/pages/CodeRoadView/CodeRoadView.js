@@ -34,6 +34,10 @@ export default class CodeRoadView extends Component {
           return res.data
         })
       )
+      res_dep = res_dep.modules.reduce((pre, cur) => {
+        pre[cur.source] = cur
+        return pre
+      }, {})
       this.setState({
         dirTree: res_dir,
         depCruise: res_dep
@@ -44,10 +48,10 @@ export default class CodeRoadView extends Component {
   }
 
   render() {
-    const { dirTree } = this.state
+    const { dirTree, depCruise } = this.state
     if (this.svg && this.containerSvg) {
       let size = this.containerSvg.getBoundingClientRect()
-      collapseClusterChart(this.svg, dirTree, size)
+      collapseClusterChart(this.svg, dirTree, depCruise, size)
     }
     return (
       <div className="CodeRoadMainContainer">

@@ -25,7 +25,7 @@ function getDepcruise() {
           dv.resolved = path.resolve(
             aliasValue,
             dv.module.slice(aliasName.length + 1)
-          )
+          ) + '.js'
           dv.dependencyTypes[0] = 'local_alias'
           aliasModules.push(dv.module)
         }

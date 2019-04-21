@@ -35,10 +35,7 @@ export default class CodeRoadView extends Component {
         })
       )
       let resDir = resDep.dirtrees
-      let resDepModules = resDep.modules.reduce((pre, cur) => {
-        pre[cur.source] = cur
-        return pre
-      }, {})
+      let resDepModules = resDep.modules
       this.setState({
         dirTree: resDir,
         depCruise: resDepModules

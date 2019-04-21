@@ -18,7 +18,10 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
   const { width, height } = size
   let root = hierarchy(dirTree)
   root.sort(
-    (a, b) => a.height - b.height || a.data.name.localeCompare(b.data.name)
+    (a, b) => {
+      return a.height - b.height || a.data.name.localeCompare(b.data.name)
+      // return a.data.dependencies.length - b.data.dependencies.length
+    }
   )
   root.dx = 50
   root.dy = 200
@@ -224,7 +227,7 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
   }
 
   function getDepLinks(edgeNodes, startNode, depLevel) {
-    if (depLevel <= 1 || depNodeIn.includes(startNode.data.path)) {
+    if (depLevel <= 0 || depNodeIn.includes(startNode.data.path)) {
       return []
     }
     depNodeIn.push(startNode.data.path)
@@ -253,7 +256,7 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
         }
       })
       // } else {
-      if (depLevel > 1) {
+      if (depLevel >= 1) {
         depNodes.forEach(dv => {
           let subDepLinks = getDepLinks(edgeNodes, dv, depLevel)
           depLinks = depLinks.concat(subDepLinks)

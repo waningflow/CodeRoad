@@ -1,7 +1,7 @@
 import { select, event, zoom } from 'd3'
 import { hierarchy, cluster } from 'd3-hierarchy'
 
-const depLevel = 10
+const depLevel = 3
 const colorList = [
   '#058DC7',
   '#50B432',

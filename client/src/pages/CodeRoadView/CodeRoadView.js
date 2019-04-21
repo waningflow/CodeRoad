@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { clusterChart, collapseClusterChart } from './Chart'
+import { collapseClusterChart } from './Chart'
 import './CodeRoadView.css'
 
 export default class CodeRoadView extends Component {
@@ -25,8 +25,8 @@ export default class CodeRoadView extends Component {
 
   async initData() {
     try {
-      let [res_dir, res_dep] = await Promise.all(
-        ['dirtree', 'depcruise'].map(async v => {
+      let [resDep] = await Promise.all(
+        ['depcruise'].map(async v => {
           let res = await axios({
             method: 'GET',
             url: `http://localhost:3450/${v}`
@@ -34,13 +34,14 @@ export default class CodeRoadView extends Component {
           return res.data
         })
       )
-      res_dep = res_dep.modules.reduce((pre, cur) => {
+      let resDir = resDep.dirtrees
+      let resDepModules = resDep.modules.reduce((pre, cur) => {
         pre[cur.source] = cur
         return pre
       }, {})
       this.setState({
-        dirTree: res_dir,
-        depCruise: res_dep
+        dirTree: resDir,
+        depCruise: resDepModules
       })
     } catch (e) {
       console.log(e)

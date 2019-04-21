@@ -42,3 +42,21 @@
   /* overflow: scroll; */
   color: antiquewhite;
 }
+.CodeRoadCodeHeader{
+  position: absolute;
+  height: 40px;
+  left: 0;
+  right: 0;
+  background-color: #1d1e22;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  padding-left: 15px;
+}
+.CodeRoadCodeContainer{
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

@@ -130,24 +130,28 @@ export default class CodeRoadView extends Component {
           <div className="CodeRoadCodeBoard">
             <div className="CodeRoadDragHandler" />
             <div className="CodeRoadCodeEditor">
-              {/* {editorNodePath} */}
-              <AceEditor
-                width="100%"
-                height="100%"
-                mode="javascript"
-                theme="monokai"
-                name="CodeRoadEditor"
-                fontSize={13}
-                showGutter={true}
-                highlightActiveLine={true}
-                value={editorNodeContent}
-                tabSize={2}
-                readOnly={true}
-                setOptions={{
-                  showLineNumbers: true,
-                  useWorker: false
-                }}
-              />
+              <div className="CodeRoadCodeHeader" >
+              {editorNodePath}
+              </div>
+              <div className="CodeRoadCodeContainer">
+                <AceEditor
+                  width="100%"
+                  height="100%"
+                  mode="javascript"
+                  theme="monokai"
+                  name="CodeRoadEditor"
+                  fontSize={13}
+                  showGutter={true}
+                  highlightActiveLine={true}
+                  value={editorNodeContent}
+                  tabSize={2}
+                  readOnly={true}
+                  setOptions={{
+                    showLineNumbers: true,
+                    useWorker: false
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}

@@ -1,7 +1,6 @@
 import { select, event, zoom } from 'd3'
 import { hierarchy, cluster } from 'd3-hierarchy'
 
-const depLevel = 3
 const colorList = [
   '#058DC7',
   '#50B432',
@@ -14,93 +13,112 @@ const colorList = [
   '#6AF9C4'
 ]
 
-export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
-  const { width, height } = size
-  let root = hierarchy(dirTree)
-  root.sort(
-    (a, b) => {
-      return a.height - b.height || a.data.name.localeCompare(b.data.name)
-      // return a.data.dependencies.length - b.data.dependencies.length
-    }
-  )
-  root.dx = 50
-  root.dy = 200
+export default class ChartController {
+  constructor(props) {
+    const { domsvg, dirTree, depCruise, size, depLevel } = props
+    this.domsvg = domsvg
+    this.dirTree = dirTree
+    this.depCruise = depCruise
+    this.size = size
+    this.depLevel = depLevel || 3
 
-  root.x0 = height / 2
-  root.y0 = root.dy
-  cluster().nodeSize([root.dx, root.dy])(root)
-  console.log(root)
+    this.root = null
+    this.svg = null
+    this.gLink = null
+    this.gNode = null
+    this.gDepLink = null
 
-  root.descendants().forEach((d, i) => {
-    d.id = i
-    d._children = d.children
-    if (d.depth >= 1) d.children = null
-  })
+    this.depCount = 0
+    this.depNodeIn = []
+    this.hoverNode = null
+    this.clickNode = null
+  }
 
-  const svg = select(domsvg)
-    .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', [0, 0, width, height])
-    .call(
-      zoom()
-        .scaleExtent([0.3, 3])
-        .on('zoom', function() {
-          svg.attr('transform', event.transform)
-          svg.attr(
-            'transform',
-            'translate(' +
-              (event.transform.x + event.transform.k * root.dy) +
-              ',' +
-              (event.transform.y + (event.transform.k * height) / 2) +
-              ') scale(' +
-              event.transform.k +
-              ')'
-          )
-        })
-    )
-    .append('g')
-    .style('font', '14px sans-serif')
-    .style('user-select', 'none')
-    .attr('transform', `translate(0,0)`)
-    .attr('transform', `translate(${root.dy},${height / 2})`)
-  // .call(zoom)
+  initCollapseClusterChart() {
+    const { width, height } = this.size
+    let root = hierarchy(this.dirTree)
+    root.sort((a, b) => {
+      // return a.height - b.height || a.data.name.localeCompare(b.data.name)
+      return a.data.dependencies.length - b.data.dependencies.length
+    })
+    root.dx = 50
+    root.dy = 200
 
-  const gLink = svg
-    .append('g')
-    .attr('fill', 'none')
-    .attr('stroke', '#999')
-    .attr('stroke-opacity', 0.4)
-    .attr('stroke-width', 1.5)
-
-  const gNode = svg.append('g').attr('cursor', 'pointer')
-
-  const gDepLink = svg
-    .append('g')
-    .attr('fill', 'none')
-    .attr('stroke', '#999')
-    .attr('stroke-width', 1)
-
-  let depCount = 0
-  let depNodeIn = []
-  let hoverNode = null
-  let clickNode = null
-
-  function update() {
-    const duration = event && event.altKey ? 2500 : 250
+    root.x0 = height / 2
+    root.y0 = root.dy
     cluster().nodeSize([root.dx, root.dy])(root)
-    const nodes = root.descendants()
-    const links = root.links()
+    console.log(root)
 
-    const transition = svg
-      .transition()
-      .duration(duration)
-      .tween(
-        'resize',
-        window.ResizeObserver ? null : () => () => svg.dispatch('toggle')
+    root.descendants().forEach((d, i) => {
+      d.id = i
+      d._children = d.children
+      if (d.depth >= 1) d.children = null
+    })
+
+    const svg = select(this.domsvg)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', [0, 0, width, height])
+      .call(
+        zoom()
+          .scaleExtent([0.3, 3])
+          .on('zoom', function() {
+            svg.attr('transform', event.transform)
+            svg.attr(
+              'transform',
+              'translate(' +
+                (event.transform.x + event.transform.k * root.dy) +
+                ',' +
+                (event.transform.y + (event.transform.k * height) / 2) +
+                ') scale(' +
+                event.transform.k +
+                ')'
+            )
+          })
       )
+      .append('g')
+      .style('font', '14px sans-serif')
+      .style('user-select', 'none')
+      .attr('transform', `translate(0,0)`)
+      .attr('transform', `translate(${root.dy},${height / 2})`)
+
+    const gLink = svg
+      .append('g')
+      .attr('fill', 'none')
+      .attr('stroke', '#999')
+      .attr('stroke-opacity', 0.4)
+      .attr('stroke-width', 1.5)
+
+    const gNode = svg.append('g').attr('cursor', 'pointer')
+
+    const gDepLink = svg
+      .append('g')
+      .attr('fill', 'none')
+      .attr('stroke', '#999')
+      .attr('stroke-width', 1)
+
+    this.root = root
+    this.svg = svg
+    this.gLink = gLink
+    this.gNode = gNode
+    this.gDepLink = gDepLink
+
+    this.update()
+
+    return svg.node()
+  }
+
+  update() {
+    const self = this
+    const duration = event && event.altKey ? 2500 : 250
+    cluster().nodeSize([self.root.dx, self.root.dy])(self.root)
+    const nodes = self.root.descendants()
+    const links = self.root.links()
+
+    const transition = self.svg.transition().duration(duration)
 
     // Update the nodes…
-    const node = gNode.selectAll('g').data(nodes, d => d.id)
+    const node = self.gNode.selectAll('g').data(nodes, d => d.id)
 
     // Enter any new nodes at the parent's previous position.
     const nodeEnter = node
@@ -110,32 +128,30 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
       .attr('stroke-opacity', 0)
       .on('click', d => {
         d.children = d.children ? null : d._children
-        if(!d._children){
-          clickNode = d
+        if (!d._children) {
+          self.clickNode = d
         }
-        // console.log(d.data.path)
-        // let nodeInfo = depCruise[d.data.path]
-        // console.log(nodeInfo)
-        // if(click)
-        if(clickNode){
-          let edgeNodes = root.descendants().filter(v => !v.children)
+        if (self.clickNode) {
+          let edgeNodes = self.root.descendants().filter(v => !v.children)
           // console.log(edgeNodes)
-          depCount = 0
-          depNodeIn = []
-          let depLinks = getDepLinks(edgeNodes, clickNode, depLevel)
-          root.depLinks = depLinks
-          console.log(root.depLinks)
+          self.depCount = 0
+          self.depNodeIn = []
+          let depLinks = self.getDepLinks(
+            edgeNodes,
+            self.clickNode,
+            self.depLevel
+          )
+          self.root.depLinks = depLinks
         }
-        // console.log(dep_nodes)
-        update(d)
+        self.update(d)
       })
       .on('mouseover', d => {
-        hoverNode = d.data.path
-        update(d)
+        self.hoverNode = d.data.path
+        self.update(d)
       })
       .on('mouseout', d => {
-        hoverNode = null
-        update(d)
+        self.hoverNode = null
+        self.update(d)
       })
 
     nodeEnter
@@ -147,15 +163,12 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
       .append('text')
       .attr('dy', '0.31em')
       .attr('fill', '#fff')
-      // .attr('x', d => (d._children ? -6 : 6))
-      // .attr('text-anchor', d => (d._children ? 'end' : 'start'))
       .attr('text-anchor', 'end')
       .attr('x', -6)
       .text(d => d.data.name)
       .clone(true)
       .lower()
 
-    // Transition nodes to their new position.
     node
       .merge(nodeEnter)
       .transition(transition)
@@ -163,55 +176,52 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
       .attr('fill-opacity', 1)
       .attr('stroke-opacity', 1)
 
-    // Transition exiting nodes to the parent's new position.
     node
       .exit()
       .remove()
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
 
-    // Update the links…
-    const link = gLink.selectAll('path').data(links, d => d.target.id)
+    const link = self.gLink.selectAll('path').data(links, d => d.target.id)
 
     const linkEnter = link
       .enter()
       .append('path')
-      .attr('d', d => linkPath(d))
+      .attr('d', d => self.linkPath(d))
 
     link
       .merge(linkEnter)
       .transition(transition)
-      .attr('d', d => linkPath(d))
+      .attr('d', d => self.linkPath(d))
 
     link
       .exit()
       .remove()
-      .attr('d', d => linkPath(d))
+      .attr('d', d => self.linkPath(d))
 
-    const depLink = gDepLink
+    const depLink = self.gDepLink
       .selectAll('path')
-      .data(root.depLinks || [], d => d.target.id)
+      .data(self.root.depLinks || [], d => d.target.id)
 
+    const colorListLength = colorList.length
     const depLinkEnter = depLink
       .enter()
       .append('path')
-      .attr('d', d => depLinkPath(d))
-      .attr('stroke', d => colorList[d.depCount-1])
+      .attr('d', d => self.depLinkPath(d))
+      .attr('stroke', d => colorList[(d.depCount - 1) % colorListLength])
       .attr('stroke-width', 1)
-      .filter(d => hoverNode === d.source.data.path)
+      .filter(d => self.hoverNode === d.source.data.path)
       .attr('stroke', '#fff')
       .attr('stroke-width', 2)
       .clone(true)
       .raise()
-    // .append('path')
-    // .attr('d', d=> arrowPath(d))
 
     depLink
       .merge(depLinkEnter)
-      .attr('d', d => depLinkPath(d))
-      .attr('stroke', d => colorList[d.depCount-1])
+      .attr('d', d => self.depLinkPath(d))
+      .attr('stroke', d => colorList[(d.depCount - 1) % colorListLength])
       .attr('stroke-width', 1)
-      .filter(d => hoverNode === d.source.data.path)
+      .filter(d => self.hoverNode === d.source.data.path)
       .attr('stroke', '#fff')
       .attr('stroke-width', 2)
       .clone(true)
@@ -219,24 +229,20 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
 
     depLink.exit().remove()
 
-    // Stash the old positions for transition.
-    // root.eachBefore(d => {
-    //   d.x0 = d.x
-    //   d.y0 = d.y
-    // })
   }
 
-  function getDepLinks(edgeNodes, startNode, depLevel) {
-    if (depLevel <= 0 || depNodeIn.includes(startNode.data.path)) {
+  getDepLinks(edgeNodes, startNode, depLevel) {
+    const self = this
+    if (depLevel <= 0 || self.depNodeIn.includes(startNode.data.path)) {
       return []
     }
-    depNodeIn.push(startNode.data.path)
+    self.depNodeIn.push(startNode.data.path)
     let depLinks = []
-    let startNd = depCruise[startNode.data.path]
+    let startNd = self.depCruise[startNode.data.path]
     depLevel -= 1
     // console.log(startNode)
     if (startNd && startNd.dependencies && startNd.dependencies.length) {
-      depCount += 1
+      self.depCount += 1
       let depNodes = []
       // let depNds = []
       startNd.dependencies.forEach(nv => {
@@ -246,46 +252,37 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
         // depNds.push(depCruise[nv.resolved])
       })
 
-      console.log(depNodes)
+      // console.log(depNodes)
       depLinks = depNodes.map(dv => {
         return {
           source: startNode,
           target: dv,
           level: depLevel,
-          depCount: depCount
+          depCount: self.depCount
         }
       })
       // } else {
       if (depLevel >= 1) {
         depNodes.forEach(dv => {
-          let subDepLinks = getDepLinks(edgeNodes, dv, depLevel)
+          let subDepLinks = self.getDepLinks(edgeNodes, dv, depLevel)
           depLinks = depLinks.concat(subDepLinks)
         })
       }
     }
-    console.log(depLevel)
+    // console.log(depLevel)
     return depLinks
   }
 
-  function arrowPath(d) {
-    const size = 5
-    return `
-      M${d.target.y + size},${d.target.x - size}
-      L${d.target.y},${d.target.x}
-      L${d.target.y + size},${d.target.x + size}
-    `
-  }
-
-  function linkPath(d) {
+  linkPath(d) {
     return `
         M${d.target.y},${d.target.x}
-        C${d.source.y + root.dy / 2},${d.target.x}
-         ${d.source.y + root.dy / 2},${(d.target.x + d.source.x) / 2}
+        C${d.source.y + this.root.dy / 2},${d.target.x}
+         ${d.source.y + this.root.dy / 2},${(d.target.x + d.source.x) / 2}
          ${d.source.y},${d.source.x}
       `
   }
 
-  function depLinkPath(d) {
+  depLinkPath(d) {
     let sig = Math.sign(-d.target.x + d.source.x)
     const base = 50
     const gap = 10
@@ -305,8 +302,4 @@ export function collapseClusterChart(domsvg, dirTree, depCruise, size) {
       L${d.target.y + size * 2},${d.target.x + size}
     `
   }
-
-  update(root)
-
-  return svg.node()
 }

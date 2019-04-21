@@ -1,7 +1,7 @@
 const Koa = require('koa')
 const Router = require('koa-router')
 const cors = require('@koa/cors')
-const dirTree = require('directory-tree')
+// const dirTree = require('directory-tree')
 const { getDepcruise } = require('../util')
 
 const app = new Koa()

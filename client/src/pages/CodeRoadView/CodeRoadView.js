@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { collapseClusterChart } from './Chart'
+import ChartController from './Chart'
 import './CodeRoadView.css'
 
 export default class CodeRoadView extends Component {
@@ -14,6 +14,8 @@ export default class CodeRoadView extends Component {
 
     this.containerSvg
     this.initData()
+
+    this.chartCtrller = null
   }
 
   componentDidMount() {
@@ -47,9 +49,16 @@ export default class CodeRoadView extends Component {
 
   render() {
     const { dirTree, depCruise } = this.state
-    if (this.svg && this.containerSvg) {
+    if (!this.chartCtrller && this.svg && this.containerSvg) {
       let size = this.containerSvg.getBoundingClientRect()
-      collapseClusterChart(this.svg, dirTree, depCruise, size)
+      this.chartCtrller = new ChartController({
+        domsvg: this.svg,
+        dirTree: dirTree,
+        depCruise: depCruise,
+        size: size,
+        depLevel: 3
+      })
+      this.chartCtrller.initCollapseClusterChart()
     }
     return (
       <div className="CodeRoadMainContainer">

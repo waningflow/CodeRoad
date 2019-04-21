@@ -32,6 +32,8 @@ export default class ChartController {
     this.depNodeIn = []
     this.hoverNode = null
     this.clickNode = null
+
+    this.eventPool = {}
   }
 
   initCollapseClusterChart() {
@@ -108,6 +110,34 @@ export default class ChartController {
     return svg.node()
   }
 
+  triggerEvent(eventType, options){
+    if(this.eventPool[eventType] && this.eventPool[eventType].length){
+      this.eventPool[eventType].forEach(fun => {
+        fun.call(this, options)
+      })
+    }
+  }
+
+  onEvent(eventType, callback){
+    if(!this.eventPool[eventType]){
+      this.eventPool[eventType] = []
+    }
+    this.eventPool[eventType].push(callback)
+  }
+
+  removeEvent(eventType){
+    delete this.eventPool[eventType]
+  }
+
+  updateSize(size) {
+    this.size = size
+    const { width, height } = size
+    this.svg
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', [0, 0, width, height])
+  }
+
   update() {
     const self = this
     const duration = event && event.altKey ? 2500 : 250
@@ -130,6 +160,8 @@ export default class ChartController {
         d.children = d.children ? null : d._children
         if (!d._children) {
           self.clickNode = d
+        }else if(self.clickNode && self.clickNode.data.path.startsWith(d.data.path)){
+          self.clickNode = d
         }
         if (self.clickNode) {
           let edgeNodes = self.root.descendants().filter(v => !v.children)
@@ -143,6 +175,7 @@ export default class ChartController {
           )
           self.root.depLinks = depLinks
         }
+        self.triggerEvent('clickNode', d)
         self.update(d)
       })
       .on('mouseover', d => {
@@ -228,7 +261,6 @@ export default class ChartController {
       .raise()
 
     depLink.exit().remove()
-
   }
 
   getDepLinks(edgeNodes, startNode, depLevel) {

@@ -16,27 +16,34 @@ function getFileList(tree) {
 
 function attachDep(tree, modules) {
   if (tree.type === 'file') {
-    tree.dependencies = modules[tree.path].dependencies.map(v => v.resolved)
-  }else if(tree.type === 'directory'){
+    tree.dependencies = []
+    if (modules[tree.path]) {
+      tree.dependencies = modules[tree.path].dependencies.map(v => v.resolved)
+    }
+  } else if (tree.type === 'directory') {
     let deps = tree.children.reduce((pre, cur) => {
       attachDep(cur, modules)
       pre = pre.concat(cur.dependencies)
       return pre
     }, [])
     tree.dependencies = deps.filter(v => !v.startsWith(tree.path))
+    tree.path += '/'
   }
 }
 
 function getDepcruise(params) {
   const { rootPath, aliasPath } = params
-  const alias = require(aliasPath) || {}
+  const alias = aliasPath ? require(aliasPath) : {}
   console.log(alias)
 
   let dependencies = depcruise([rootPath], {
     exclude: '(node_modules)'
   })
 
-  let dirtrees = dirtree(rootPath)
+  let dirtrees = dirtree(rootPath, {
+    extensions: /\.(js|jsx|vue)$/,
+    exclude: /node_modules/
+  })
   let fileList = getFileList(dirtrees)
 
   let aliasModules = []
@@ -75,7 +82,7 @@ function getDepcruise(params) {
     pre[cur.source] = cur
     return pre
   }, {})
-  dependencies.fileList = fileList
+  // dependencies.fileList = fileList
   attachDep(dirtrees, dependencies.modules)
   dependencies.dirtrees = dirtrees
   // console.log(JSON.stringify(dependencies.fileList.map(v => v.path).sort()))

@@ -20,6 +20,9 @@ router.get('/depcruise', (ctx, next) => {
     rootPath: '/Users/waning/Pinssible/github/vue/src',
     aliasPath: '/Users/waning/Pinssible/github/vue/scripts/alias'
   })
+  // ctx.body = getDepcruise({
+  //   rootPath: '/Users/waning/Pinssible/github/react/packages'
+  // })
 })
 
 app.use(router.routes())

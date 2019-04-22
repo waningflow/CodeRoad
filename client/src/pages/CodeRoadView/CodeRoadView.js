@@ -141,6 +141,7 @@ export default class CodeRoadView extends Component {
                   theme="monokai"
                   name="CodeRoadEditor"
                   fontSize={13}
+                  showPrintMargin={false}
                   showGutter={true}
                   highlightActiveLine={true}
                   value={editorNodeContent}

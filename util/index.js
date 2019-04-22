@@ -31,17 +31,27 @@ function attachDep(tree, modules) {
   }
 }
 
+function isExtSupport(path, exts) {
+  for (let i = 0, l = exts.length; i < l; i++) {
+    if (path.endsWith(exts[i])) {
+      return true
+    }
+  }
+  return false
+}
+
 function getDepcruise(params) {
   const { rootPath, aliasPath } = params
   const alias = aliasPath ? require(aliasPath) : {}
   console.log(alias)
+  const exts = ['js', 'jsx', 'vue', 'json']
 
   let dependencies = depcruise([rootPath], {
-    exclude: '(node_modules)'
+    exclude: /node_modules/
   })
 
   let dirtrees = dirtree(rootPath, {
-    extensions: /\.(js|jsx|vue)$/,
+    extensions: /\.(js|jsx|vue|json)$/,
     exclude: /node_modules/
   })
   let fileList = getFileList(dirtrees)
@@ -73,10 +83,14 @@ function getDepcruise(params) {
         }
         return dv
       })
+      .filter(dv => isExtSupport(dv.resolved, exts))
     return v
   })
   dependencies.modules = dependencies.modules.filter(
-    v => aliasModules.indexOf(v.source) === -1 && !v.coreModule
+    v =>
+      aliasModules.indexOf(v.source) === -1 &&
+      !v.coreModule &&
+      isExtSupport(v.source, exts)
   )
   dependencies.modules = dependencies.modules.reduce((pre, cur) => {
     pre[cur.source] = cur

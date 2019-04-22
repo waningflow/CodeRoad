@@ -283,6 +283,7 @@ export default class ChartController {
         )
         // depNds.push(depCruise[nv.resolved])
       })
+      depNodes = depNodes.filter(Boolean)
 
       // console.log(depNodes)
       depLinks = depNodes.map(dv => {

@@ -4,6 +4,7 @@ import ChartController from './Chart'
 import './CodeRoadView.css'
 import Switch from '@material-ui/core/Switch'
 import AceEditor from 'react-ace'
+import Resizable from 're-resizable'
 
 import 'brace/mode/javascript'
 import 'brace/theme/monokai'
@@ -121,18 +122,37 @@ export default class CodeRoadView extends Component {
           <div className="CoadRoadToolsBar">
             <Switch
               checked={showCodeboard}
-              onChange={this.handleChangeSwitch('showCodeboard').bind(this)}
+              onChange={this.handleChangeSwitch('showCodeboard')}
               value="showCodeboard"
             />
           </div>
         </div>
         {showCodeboard && (
-          <div className="CodeRoadCodeBoard">
-            <div className="CodeRoadDragHandler" />
+          <Resizable
+            className="CodeRoadCodeBoard"
+            defaultSize={{
+              width: '50%'
+            }}
+            minWidth={10}
+            enable={{
+              top: false,
+              right: false,
+              bottom: false,
+              left: true,
+              topRight: false,
+              bottomRight: false,
+              bottomLeft: false,
+              topLeft: false
+            }}
+            // handleWrapperStyle={{
+            //   width: '18px',
+            //   background: '#1d1e22'
+            // }}
+            handleWrapperClass="CodeRoadDragHandler"
+          >
+            {/* <div className="CodeRoadDragHandler" /> */}
             <div className="CodeRoadCodeEditor">
-              <div className="CodeRoadCodeHeader" >
-              {editorNodePath}
-              </div>
+              <div className="CodeRoadCodeHeader">{editorNodePath}</div>
               <div className="CodeRoadCodeContainer">
                 <AceEditor
                   width="100%"
@@ -154,7 +174,7 @@ export default class CodeRoadView extends Component {
                 />
               </div>
             </div>
-          </div>
+          </Resizable>
         )}
       </div>
     )

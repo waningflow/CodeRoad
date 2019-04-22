@@ -19,19 +19,18 @@
   right: 0;
 }
 .CodeRoadCodeBoard {
-  flex: 1;
+  /* flex: 1; */
   position: relative;
   min-width: 0;
   background-color: #333;
-  padding-left: 18px;
+  padding-left: 10px;
 }
 .CodeRoadDragHandler {
   position: absolute;
   left: 0;
   top: 0;
-  width: 18px;
+  width: 10px;
   height: 100%;
-  cursor: col-resize;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-right: 1px solid rgba(0, 0, 0, 0.4);
   background: #1d1e22;

@@ -31,7 +31,9 @@ export default class ChartController {
     this.depCount = 0
     this.depNodeIn = []
     this.hoverNode = null
-    this.clickNode = null
+    this.startNode = null
+
+    this.startFileLocked = false
 
     this.eventPool = {}
   }
@@ -110,22 +112,26 @@ export default class ChartController {
     return svg.node()
   }
 
-  triggerEvent(eventType, options){
-    if(this.eventPool[eventType] && this.eventPool[eventType].length){
+  lockStartFile(status) {
+    this.startFileLocked = status
+  }
+
+  triggerEvent(eventType, options) {
+    if (this.eventPool[eventType] && this.eventPool[eventType].length) {
       this.eventPool[eventType].forEach(fun => {
         fun.call(this, options)
       })
     }
   }
 
-  onEvent(eventType, callback){
-    if(!this.eventPool[eventType]){
+  onEvent(eventType, callback) {
+    if (!this.eventPool[eventType]) {
       this.eventPool[eventType] = []
     }
     this.eventPool[eventType].push(callback)
   }
 
-  removeEvent(eventType){
+  removeEvent(eventType) {
     delete this.eventPool[eventType]
   }
 
@@ -157,25 +163,37 @@ export default class ChartController {
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
       .on('click', d => {
-        d.children = d.children ? null : d._children
-        if (!d._children) {
-          self.clickNode = d
-        }else if(self.clickNode && self.clickNode.data.path.startsWith(d.data.path)){
-          self.clickNode = d
+        if(!this.startFileLocked){
+          if (d.data.type === 'file') {
+            self.startNode = d
+          } else if (
+            self.startNode &&
+            self.startNode.data.path.startsWith(d.data.path)
+          ) {
+            self.startNode = null
+          }
+          d.children = d.children ? null : d._children
+        }else{
+          if(!self.startNode.data.path.startsWith(d.data.path)){
+            d.children = d.children ? null : d._children
+          }
         }
-        if (self.clickNode) {
-          let edgeNodes = self.root.descendants().filter(v => !v.children)
-          // console.log(edgeNodes)
-          self.depCount = 0
-          self.depNodeIn = []
-          let depLinks = self.getDepLinks(
-            edgeNodes,
-            self.clickNode,
-            self.depLevel
-          )
-          self.root.depLinks = depLinks
-        }
-        self.triggerEvent('clickNode', d)
+        
+        let edgeNodes = self.root.descendants().filter(v => !v.children)
+        // console.log(edgeNodes)
+        self.depCount = 0
+        self.depNodeIn = []
+        let depLinks = self.getDepLinks(
+          edgeNodes,
+          self.startNode,
+          self.depLevel
+        )
+        self.root.depLinks = depLinks
+
+        self.triggerEvent('clickNode', {
+          clickNode: d,
+          startNode: self.startNode
+        })
         self.update(d)
       })
       .on('mouseover', d => {
@@ -265,7 +283,11 @@ export default class ChartController {
 
   getDepLinks(edgeNodes, startNode, depLevel) {
     const self = this
-    if (depLevel <= 0 || self.depNodeIn.includes(startNode.data.path)) {
+    if (
+      depLevel <= 0 ||
+      !startNode ||
+      self.depNodeIn.includes(startNode.data.path)
+    ) {
       return []
     }
     self.depNodeIn.push(startNode.data.path)

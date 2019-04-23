@@ -27,6 +27,7 @@
     "@babel/runtime": "^7.4.3",
     "@koa/cors": "2",
     "@material-ui/core": "^3.9.3",
+    "@material-ui/icons": "^3.0.2",
     "axios": "^0.18.0",
     "commander": "^2.20.0",
     "d3": "^5.9.2",

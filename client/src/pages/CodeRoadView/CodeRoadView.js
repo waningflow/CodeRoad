@@ -3,8 +3,11 @@ import axios from 'axios'
 import ChartController from './Chart'
 import './CodeRoadView.css'
 import Switch from '@material-ui/core/Switch'
+import LockIcon from '@material-ui/icons/Lock'
+import LockOpenIcon from '@material-ui/icons/LockOpen'
 import AceEditor from 'react-ace'
 import Resizable from 're-resizable'
+import IconButton from '@material-ui/core/IconButton'
 
 import 'brace/mode/javascript'
 import 'brace/theme/monokai'
@@ -18,7 +21,9 @@ export default class CodeRoadView extends Component {
       depCruise: {},
       showCodeboard: false,
       editorNodePath: '',
-      editorNodeContent: ''
+      editorNodeContent: '',
+      startFileLocked: false,
+      startFileLockPath: ''
     }
 
     this.fileContent = {}
@@ -50,8 +55,13 @@ export default class CodeRoadView extends Component {
     }
   }
 
-  async handleClickNode(node) {
-    console.log(node)
+  async handleClickNode(params) {
+    const { clickNode: node, startNode } = params
+    if(!node){
+      return
+    }
+    // console.log(node)
+    // console.log(startNode)
     if (node.data.type === 'file') {
       if (!this.fileContent[node.data.path]) {
         let content = await this.getFileContent(node.data.path)
@@ -59,7 +69,25 @@ export default class CodeRoadView extends Component {
       }
       this.setState({
         editorNodePath: node.data.path,
-        editorNodeContent: this.fileContent[node.data.path]
+        editorNodeContent: this.fileContent[node.data.path],
+        clickedNodeType: 'file',
+        clickedNodePath: node.data.path
+      })
+    } else {
+      this.setState({
+        clickedNodeType: 'directory',
+        clickedNodePath: node.data.path
+      })
+    }
+
+    if(startNode){
+      console.log(startNode.data.path)
+      this.setState({
+        startNodePath: startNode.data.path
+      })
+    }else{
+      this.setState({
+        startNodePath: ''
       })
     }
   }
@@ -109,8 +137,25 @@ export default class CodeRoadView extends Component {
     })
   }
 
+  handleClickLock = type => () => {
+    console.log(type)
+    let locked = Boolean(type === 'lock')
+    this.setState({
+      startFileLocked: locked
+    })
+    if (this.chartCtrller) {
+      this.chartCtrller.lockStartFile(locked)
+    }
+  }
+
   render() {
-    const { showCodeboard, editorNodePath, editorNodeContent } = this.state
+    const {
+      showCodeboard,
+      editorNodePath,
+      editorNodeContent,
+      startFileLocked,
+      startNodePath
+    } = this.state
 
     return (
       <div className="CodeRoadMainContainer">
@@ -125,6 +170,24 @@ export default class CodeRoadView extends Component {
               onChange={this.handleChangeSwitch('showCodeboard')}
               value="showCodeboard"
             />
+            {startFileLocked ? (
+              <IconButton
+                color="secondary"
+                style={{ fontSize: '30px', cursor: 'pointer' }}
+                onClick={this.handleClickLock('unlock')}
+              >
+                <LockIcon />
+              </IconButton>
+            ) : (
+              <IconButton
+                color="secondary"
+                style={{ fontSize: '30px', cursor: 'pointer' }}
+                onClick={this.handleClickLock('lock')}
+                disabled={!startNodePath}
+              >
+                <LockOpenIcon />
+              </IconButton>
+            )}
           </div>
         </div>
         {showCodeboard && (

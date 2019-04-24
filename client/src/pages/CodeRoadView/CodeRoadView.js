@@ -24,7 +24,7 @@ export default class CodeRoadView extends Component {
       editorNodeContent: '',
       startFileLocked: false,
       startFileLockPath: '',
-      editorWidth: window.innerWidth/2
+      editorWidth: window.innerWidth / 2
     }
 
     this.fileContent = {}
@@ -64,6 +64,10 @@ export default class CodeRoadView extends Component {
     // console.log(node)
     // console.log(startNode)
     if (node.data.type === 'file') {
+      if (this.editor) {
+        console.log('file change')
+        this.editor.editor.gotoLine(1)
+      }
       if (!this.fileContent[node.data.path]) {
         let content = await this.getFileContent(node.data.path)
         this.fileContent[node.data.path] = content
@@ -133,9 +137,17 @@ export default class CodeRoadView extends Component {
   }
 
   handleChangeSwitch = name => event => {
-    this.setState({
-      [name]: event.target.checked
-    })
+    this.setState(
+      {
+        [name]: event.target.checked
+      },
+      () => {
+        if (this.editor) {
+          console.log('editor change')
+          this.editor.editor.gotoLine(1)
+        }
+      }
+    )
   }
 
   handleClickLock = type => () => {
@@ -211,7 +223,7 @@ export default class CodeRoadView extends Component {
             }}
             onResizeStop={(e, direction, ref, d) => {
               this.setState({
-                editorWidth: this.state.editorWidth + d.width,
+                editorWidth: this.state.editorWidth + d.width
               })
               this.editor.editor.resize()
             }}
@@ -231,6 +243,7 @@ export default class CodeRoadView extends Component {
                   mode="javascript"
                   theme="monokai"
                   name="CodeRoadEditor"
+                  cursorStart={1}
                   fontSize={13}
                   showPrintMargin={false}
                   showGutter={true}
@@ -238,11 +251,16 @@ export default class CodeRoadView extends Component {
                   value={editorNodeContent}
                   tabSize={2}
                   readOnly={true}
+                  editorProps={{
+                    $blockScrolling: Infinity
+                  }}
                   setOptions={{
                     showLineNumbers: true,
-                    useWorker: false
+                    useWorker: false,
+                    hScrollBarAlwaysVisible: true,
+                    vScrollBarAlwaysVisible: true
                   }}
-                  ref={ref => this.editor = ref}
+                  ref={ref => (this.editor = ref)}
                 />
               </div>
             </div>

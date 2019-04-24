@@ -23,7 +23,8 @@ export default class CodeRoadView extends Component {
       editorNodePath: '',
       editorNodeContent: '',
       startFileLocked: false,
-      startFileLockPath: ''
+      startFileLockPath: '',
+      editorWidth: window.innerWidth/2
     }
 
     this.fileContent = {}
@@ -57,7 +58,7 @@ export default class CodeRoadView extends Component {
 
   async handleClickNode(params) {
     const { clickNode: node, startNode } = params
-    if(!node){
+    if (!node) {
       return
     }
     // console.log(node)
@@ -80,12 +81,12 @@ export default class CodeRoadView extends Component {
       })
     }
 
-    if(startNode){
+    if (startNode) {
       console.log(startNode.data.path)
       this.setState({
         startNodePath: startNode.data.path
       })
-    }else{
+    } else {
       this.setState({
         startNodePath: ''
       })
@@ -154,7 +155,8 @@ export default class CodeRoadView extends Component {
       editorNodePath,
       editorNodeContent,
       startFileLocked,
-      startNodePath
+      startNodePath,
+      editorWidth
     } = this.state
 
     return (
@@ -194,7 +196,7 @@ export default class CodeRoadView extends Component {
           <Resizable
             className="CodeRoadCodeBoard"
             defaultSize={{
-              width: '50%'
+              width: editorWidth
             }}
             minWidth={10}
             enable={{
@@ -206,6 +208,12 @@ export default class CodeRoadView extends Component {
               bottomRight: false,
               bottomLeft: false,
               topLeft: false
+            }}
+            onResizeStop={(e, direction, ref, d) => {
+              this.setState({
+                editorWidth: this.state.editorWidth + d.width,
+              })
+              this.editor.editor.resize()
             }}
             // handleWrapperStyle={{
             //   width: '18px',
@@ -234,6 +242,7 @@ export default class CodeRoadView extends Component {
                     showLineNumbers: true,
                     useWorker: false
                   }}
+                  ref={ref => this.editor = ref}
                 />
               </div>
             </div>

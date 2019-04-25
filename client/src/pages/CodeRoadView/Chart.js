@@ -112,6 +112,19 @@ export default class ChartController {
     return svg.node()
   }
 
+  updateDepLevel(level = 1) {
+    let l = parseInt(level)
+    this.depLevel = l < 1 ? 1 : l
+    console.log(this.depLevel)
+
+    let edgeNodes = this.root.descendants().filter(v => !v.children)
+    this.depCount = 0
+    this.depNodeIn = []
+    let depLinks = this.getDepLinks(edgeNodes, this.startNode, this.depLevel)
+    this.root.depLinks = depLinks
+    this.update()
+  }
+
   lockStartFile(status) {
     this.startFileLocked = status
   }
@@ -163,7 +176,7 @@ export default class ChartController {
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
       .on('click', d => {
-        if(!this.startFileLocked){
+        if (!this.startFileLocked) {
           if (d.data.type === 'file') {
             self.startNode = d
           } else if (
@@ -173,12 +186,12 @@ export default class ChartController {
             self.startNode = null
           }
           d.children = d.children ? null : d._children
-        }else{
-          if(!self.startNode.data.path.startsWith(d.data.path)){
+        } else {
+          if (!self.startNode.data.path.startsWith(d.data.path)) {
             d.children = d.children ? null : d._children
           }
         }
-        
+
         let edgeNodes = self.root.descendants().filter(v => !v.children)
         // console.log(edgeNodes)
         self.depCount = 0

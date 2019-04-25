@@ -8,6 +8,11 @@ import LockOpenIcon from '@material-ui/icons/LockOpen'
 import AceEditor from 'react-ace'
 import Resizable from 're-resizable'
 import IconButton from '@material-ui/core/IconButton'
+import Input from '@material-ui/core/Input'
+import TextField from '@material-ui/core/TextField'
+import InputBase from '@material-ui/core/InputBase'
+
+import NumInput from '../../components/NumInput'
 
 import 'brace/mode/javascript'
 import 'brace/theme/monokai'
@@ -24,7 +29,8 @@ export default class CodeRoadView extends Component {
       editorNodeContent: '',
       startFileLocked: false,
       startFileLockPath: '',
-      editorWidth: window.innerWidth / 2
+      editorWidth: window.innerWidth / 2,
+      depLevel: 3
     }
 
     this.fileContent = {}
@@ -161,6 +167,12 @@ export default class CodeRoadView extends Component {
     }
   }
 
+  handleChangeDepLevel = level => {
+    if (this.chartCtrller) {
+      this.chartCtrller.updateDepLevel(level)
+    }
+  }
+
   render() {
     const {
       showCodeboard,
@@ -168,7 +180,8 @@ export default class CodeRoadView extends Component {
       editorNodeContent,
       startFileLocked,
       startNodePath,
-      editorWidth
+      editorWidth,
+      depLevel
     } = this.state
 
     return (
@@ -202,6 +215,7 @@ export default class CodeRoadView extends Component {
                 <LockOpenIcon />
               </IconButton>
             )}
+            <NumInput value={depLevel} onChange={this.handleChangeDepLevel}/>
           </div>
         </div>
         {showCodeboard && (
@@ -256,9 +270,7 @@ export default class CodeRoadView extends Component {
                   }}
                   setOptions={{
                     showLineNumbers: true,
-                    useWorker: false,
-                    hScrollBarAlwaysVisible: true,
-                    vScrollBarAlwaysVisible: true
+                    useWorker: false
                   }}
                   ref={ref => (this.editor = ref)}
                 />

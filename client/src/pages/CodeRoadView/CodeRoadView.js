@@ -29,7 +29,7 @@ export default class CodeRoadView extends Component {
       editorNodeContent: '',
       startFileLocked: false,
       startFileLockPath: '',
-      editorWidth: window.innerWidth / 2,
+      editorWidth: window.innerWidth * 0.4,
       depLevel: 3
     }
 
@@ -215,7 +215,7 @@ export default class CodeRoadView extends Component {
                 <LockOpenIcon />
               </IconButton>
             )}
-            <NumInput value={depLevel} onChange={this.handleChangeDepLevel}/>
+            <NumInput value={depLevel} min={1} max={10} onChange={this.handleChangeDepLevel}/>
           </div>
         </div>
         {showCodeboard && (

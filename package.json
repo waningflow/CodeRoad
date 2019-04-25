@@ -46,13 +46,17 @@
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@webpack-cli/init": "^0.1.5",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
+    "babel-preset-flow": "^6.23.0",
     "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.12.4",
+    "flow-bin": "^0.97.0",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.30.0",
@@ -62,7 +66,8 @@
   "babel": {
     "presets": [
       "@babel/env",
-      "@babel/react"
+      "@babel/react",
+      "@babel/flow"
     ],
     "plugins": [
       [

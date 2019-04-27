@@ -7,7 +7,8 @@ const { getDepcruise } = require('../util')
 const fs = require('fs')
 const path = require('path')
 
-function up() {
+function up(params) {
+  const { dirPath, port } = params
   const app = new Koa()
   const router = new Router()
 
@@ -20,15 +21,18 @@ function up() {
   // })
 
   router.get('/depcruise', (ctx, next) => {
+    console.log(dirPath)
     try {
       ctx.body = getDepcruise({
-        rootPath: '/Users/waning/Pinssible/github/vue/src',
-        aliasPath: '/Users/waning/Pinssible/github/vue/scripts/alias'
+        rootPath: '/Users/waning/Pinssible/github/react/packages/react',
+        aliasPath: ''
+        // aliasPath: '/Users/waning/Pinssible/github/vue/scripts/alias'
       })
       // ctx.body = getDepcruise({
       //   rootPath: '/Users/waning/Pinssible/github/react/packages'
       // })
     } catch (e) {
+      console.log(e)
       next(e)
     }
   })
@@ -42,10 +46,10 @@ function up() {
     }
   })
 
-  app.use(serve(path.resolve(__dirname, '../client/dist/')) )
+  app.use(serve(path.resolve(__dirname, '../client/dist/')))
   app.use(router.routes())
 
-  app.listen(3450)
+  app.listen(port)
 }
 
 module.exports = {
@@ -53,5 +57,5 @@ module.exports = {
 }
 
 if (!module.parent) {
-  up()
+  up({dirPath: '', port: 3450})
 }

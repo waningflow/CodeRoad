@@ -2,16 +2,29 @@
 
 const program = require('commander')
 const { up } = require('../server/index')
+const path = require('path')
 
 program
-  .option('-p, --port [value]')
-  .parse(process.argv, 'Sepcific a port number', 6789)
+  .option('-d, --dir [path]', 'The directory where the code locates', '')
+  .option('-p, --port [value]', 'The port of server', 3450)
+  .parse(process.argv)
 
-console.log('run')
-console.log(program.port)
+// console.log(process.cwd())
+// console.log(program)
+// console.log(program.port)
+// console.log(program.dir)
 
-up()
+const dirPath = path.resolve(process.cwd(), program.dir)
+const port = program.port
 
-let url = 'http://localhost:3450'
-let start = (process.platform === 'darwin'? 'open': process.platform === 'win32'? 'start': 'xdg-open')
+up({ dirPath, port })
+
+let url = `http://localhost:${port}`
+console.log(url)
+let start =
+  process.platform === 'darwin'
+    ? 'open'
+    : process.platform === 'win32'
+    ? 'start'
+    : 'xdg-open'
 require('child_process').exec(start + ' ' + url)

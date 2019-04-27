@@ -41,21 +41,21 @@ function isExtSupport(path, exts) {
 }
 
 function getDepcruise(params) {
+  console.log(params)
   const { rootPath, aliasPath } = params
   const alias = aliasPath ? require(aliasPath) : {}
   console.log(alias)
-  const exts = ['js', 'jsx', 'vue', 'json']
-
+  const exts = ['js', 'ts', 'jsx', 'tsx', 'vue']
+  console.log([rootPath])
   let dependencies = depcruise([rootPath], {
     exclude: /node_modules/
   })
 
   let dirtrees = dirtree(rootPath, {
-    extensions: /\.(js|jsx|vue|json)$/,
+    extensions: /\.(js|jsx|vue|ts|tsx)$/,
     exclude: /node_modules/
   })
   let fileList = getFileList(dirtrees)
-
   let aliasModules = []
   dependencies.modules = dependencies.modules.map(v => {
     if (v.source.startsWith('.')) {

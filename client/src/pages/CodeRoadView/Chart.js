@@ -19,6 +19,10 @@ const textPadding = {
   right: 6
 }
 
+const nodeColor = {
+  main: '#247ba0'
+}
+
 export default class ChartController {
   constructor(props) {
     const { domsvg, dirTree, depCruise, size, depLevel } = props
@@ -38,6 +42,7 @@ export default class ChartController {
     this.depNodeIn = []
     this.hoverNode = null
     this.startNode = null
+    this.clickNode = null
 
     this.startFileLocked = false
 
@@ -210,6 +215,7 @@ export default class ChartController {
         )
         self.root.depLinks = depLinks
 
+        self.clickNode = d.data.path
         self.triggerEvent('clickNode', {
           clickNode: d,
           startNode: self.startNode
@@ -232,18 +238,19 @@ export default class ChartController {
 
     nodeEnter
       .append('rect')
-      .attr('x', d => -(d.pxwidth+textPadding.right*2.5) )
+      .attr('x', d => -(d.pxwidth + textPadding.right * 2.5))
       .attr('y', -12)
-      .attr('width', d => d.pxwidth + textPadding.right*2.5)
+      .attr('width', d => d.pxwidth + textPadding.right * 2.5)
       .attr('height', 24)
       .attr('rx', 4)
       .attr('ry', 4)
       .attr('fill', 'none')
-      .attr('stroke', '#999')
+      .attr('stroke', '#fff')
 
     nodeEnter
       .append('text')
       .attr('dy', '0.31em')
+      .attr('fill', '#fff')
       .attr('fill', '#fff')
       .attr('text-anchor', 'end')
       .attr('x', -textPadding.right)
@@ -251,12 +258,38 @@ export default class ChartController {
       .clone(true)
       .lower()
 
-    node
+    const nodeUpdate = node
       .merge(nodeEnter)
       .transition(transition)
       .attr('transform', d => `translate(${d.y},${d.x})`)
       .attr('fill-opacity', 1)
       .attr('stroke-opacity', 1)
+
+    const rectNodeUpdate = nodeUpdate
+      .selectAll('rect')
+      .attr('stroke', '#999')
+      .attr('stroke-width', 1)
+      .attr('fill', 'none')
+
+    rectNodeUpdate
+      .filter(d => self.clickNode === d.data.path && d.data.type == 'file')
+      .attr('stroke', nodeColor.main)
+      .attr('stroke-width', 2)
+
+    rectNodeUpdate
+      .filter(d => self.startNode && self.startNode.data.path === d.data.path)
+      .attr('stroke', nodeColor.main)
+      .attr('fill', nodeColor.main)
+
+    const textNodeUpdate = nodeUpdate.selectAll('text').attr('fill', '#fff')
+
+    textNodeUpdate
+      .filter(d => self.clickNode === d.data.path && d.data.type == 'file')
+      .attr('fill', nodeColor.main)
+
+    textNodeUpdate
+      .filter(d => self.startNode && self.startNode.data.path === d.data.path)
+      .attr('fill', '#fff')
 
     node
       .exit()
@@ -310,6 +343,14 @@ export default class ChartController {
       .raise()
 
     depLink.exit().remove()
+  }
+
+  isClickedNode(d) {
+    return (
+      this.clickNode &&
+      this.clickNode.data.type === 'file' &&
+      this.clickNode.data.name === d.data.name
+    )
   }
 
   getDepLinks(edgeNodes, startNode, depLevel) {

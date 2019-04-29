@@ -44,7 +44,7 @@ function getDepcruise(params) {
   const { rootPath, aliasPath } = params
   const exePath = process.cwd()
   let absPath = path.resolve(exePath, rootPath)
-  const alias = aliasPath ? require(aliasPath) : {}
+  const alias = aliasPath ? require(path.resolve(exePath, aliasPath)) : {}
   const exts = ['js', 'ts', 'jsx', 'tsx', 'vue']
   let dependencies = depcruise([absPath], {
     exclude: /(node_modules)|(__tests?__)/

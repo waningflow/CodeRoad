@@ -7,19 +7,18 @@ const fs = require('fs')
 const path = require('path')
 
 function up(params) {
-  const { dir, port } = params
+  const { dir, alias, port } = params
   const app = new Koa()
   const router = new Router()
 
   app.use(cors())
 
   router.get('/depcruise', (ctx, next) => {
-    console.log(dir)
     // let pt = glob.sync(dirPath, {cwd:process.cwd()})
     try {
       ctx.body = getDepcruise({
         rootPath: dir,
-        aliasPath: ''
+        aliasPath: alias
       })
     } catch (e) {
       console.log(e)

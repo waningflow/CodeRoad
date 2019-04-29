@@ -5,13 +5,15 @@ const { up } = require('../server/index')
 
 program
   .option('-d, --dir [path]', 'The directory where the code locates', '')
+  .option('-a, --alias [path]', 'The alias config file', '')
   .option('-p, --port [value]', 'The port of server', 3450)
   .parse(process.argv)
 
 const dir = program.dir
+const alias = program.alias
 const port = program.port
 
-up({ dir, port })
+up({ dir, alias, port })
 
 let url = `http://localhost:${port}`
 console.log(url)

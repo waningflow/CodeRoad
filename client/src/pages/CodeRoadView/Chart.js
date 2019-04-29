@@ -1,5 +1,6 @@
 import { select, event, zoom } from 'd3'
 import { hierarchy, cluster } from 'd3-hierarchy'
+import pixelWidth from 'string-pixel-width'
 
 const colorList = [
   '#058DC7',
@@ -12,6 +13,11 @@ const colorList = [
   '#FFF263',
   '#6AF9C4'
 ]
+
+const textPadding = {
+  top: 5,
+  right: 6
+}
 
 export default class ChartController {
   constructor(props) {
@@ -56,6 +62,7 @@ export default class ChartController {
     root.descendants().forEach((d, i) => {
       d.id = i
       d._children = d.children
+      d.pxwidth = pixelWidth(d.data.name, { size: 14 })
       if (d.depth >= 1) d.children = null
     })
 
@@ -224,11 +231,22 @@ export default class ChartController {
       .attr('fill', d => (d._children ? '#555' : '#999'))
 
     nodeEnter
+      .append('rect')
+      .attr('x', d => -(d.pxwidth+textPadding.right*2.5) )
+      .attr('y', -12)
+      .attr('width', d => d.pxwidth + textPadding.right*2.5)
+      .attr('height', 24)
+      .attr('rx', 4)
+      .attr('ry', 4)
+      .attr('fill', 'none')
+      .attr('stroke', '#999')
+
+    nodeEnter
       .append('text')
       .attr('dy', '0.31em')
       .attr('fill', '#fff')
       .attr('text-anchor', 'end')
-      .attr('x', -6)
+      .attr('x', -textPadding.right)
       .text(d => d.data.name)
       .clone(true)
       .lower()

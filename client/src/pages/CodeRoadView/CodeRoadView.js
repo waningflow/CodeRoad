@@ -41,10 +41,7 @@ export default class CodeRoadView extends Component {
     this.chartCtrller = null
   }
 
-  componentDidMount() {
-    // const { dirTree } = this.state
-    // this.chart(this.svg, dirTree)
-  }
+  componentDidMount() {}
 
   componentDidUpdate() {
     const { dirTree, depCruise } = this.state
@@ -215,7 +212,12 @@ export default class CodeRoadView extends Component {
                 <LockOpenIcon />
               </IconButton>
             )}
-            <NumInput value={depLevel} min={1} max={10} onChange={this.handleChangeDepLevel}/>
+            <NumInput
+              value={depLevel}
+              min={1}
+              max={10}
+              onChange={this.handleChangeDepLevel}
+            />
           </div>
         </div>
         {showCodeboard && (

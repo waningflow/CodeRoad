@@ -44,7 +44,6 @@ function getDepcruise(params) {
   const { rootPath, aliasPath } = params
   const exePath = process.cwd()
   let absPath = path.resolve(exePath, rootPath)
-  console.log(absPath)
   const alias = aliasPath ? require(aliasPath) : {}
   const exts = ['js', 'ts', 'jsx', 'tsx', 'vue']
   let dependencies = depcruise([absPath], {
@@ -58,15 +57,11 @@ function getDepcruise(params) {
   let fileList = getFileList(dirtrees)
   let aliasModules = []
   dependencies.modules = dependencies.modules.map(v => {
-    // if (v.source.startsWith('.')) {
-      v.source = path.resolve(exePath, v.source)
-    // }
+    v.source = path.resolve(exePath, v.source)
     v.dependencies = v.dependencies
       .filter(dv => !dv.coreModule)
       .map(dv => {
-        // if (dv.resolved.startsWith('.')) {
-          dv.resolved = path.resolve(exePath, dv.resolved)
-        // }
+        dv.resolved = path.resolve(exePath, dv.resolved)
         if (dv.dependencyTypes && dv.dependencyTypes[0] === 'unknown') {
           let aliasName = dv.module.split(path.sep)[0]
           let aliasValue = alias[aliasName]
@@ -96,12 +91,8 @@ function getDepcruise(params) {
     pre[cur.source] = cur
     return pre
   }, {})
-  // dependencies.fileList = fileList
   attachDep(dirtrees, dependencies.modules)
   dependencies.dirtrees = dirtrees
-  // console.log(JSON.stringify(dependencies.fileList.map(v => v.path).sort()))
-  // console.log('')
-  // console.log(JSON.stringify(dependencies.modules.map(v => v.source).sort()))
   return dependencies
 }
 

@@ -2,19 +2,12 @@
 
 const program = require('commander')
 const { up } = require('../server/index')
-const path = require('path')
 
 program
   .option('-d, --dir [path]', 'The directory where the code locates', '')
   .option('-p, --port [value]', 'The port of server', 3450)
   .parse(process.argv)
 
-// console.log(process.cwd())
-// console.log(program)
-// console.log(program.port)
-// console.log(program.dir)
-
-// const dirPath = path.resolve(process.cwd(), program.dir)
 const dir = program.dir
 const port = program.port
 

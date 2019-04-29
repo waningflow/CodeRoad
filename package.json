@@ -31,7 +31,7 @@
     "axios": "^0.18.0",
     "commander": "^2.20.0",
     "d3": "^5.9.2",
-    "dependency-cruiser": "^4.15.3",
+    "dependency-cruiser": "4.16.1",
     "directory-tree": "^2.2.1",
     "koa": "^2.7.0",
     "koa-router": "^7.4.0",

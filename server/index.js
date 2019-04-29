@@ -6,9 +6,10 @@ const serve = require('koa-static')
 const { getDepcruise } = require('../util')
 const fs = require('fs')
 const path = require('path')
+const glob = require('glob')
 
 function up(params) {
-  const { dirPath, port } = params
+  const { dir, port } = params
   const app = new Koa()
   const router = new Router()
 
@@ -21,10 +22,12 @@ function up(params) {
   // })
 
   router.get('/depcruise', (ctx, next) => {
-    console.log(dirPath)
+    console.log(dir)
+    // let pt = glob.sync(dirPath, {cwd:process.cwd()})
+    // console.log(pt)
     try {
       ctx.body = getDepcruise({
-        rootPath: '/Users/waning/Pinssible/github/react/packages/react',
+        rootPath: dir,
         aliasPath: ''
         // aliasPath: '/Users/waning/Pinssible/github/vue/scripts/alias'
       })
@@ -57,5 +60,5 @@ module.exports = {
 }
 
 if (!module.parent) {
-  up({dirPath: '', port: 3450})
+  up({ dirPath: '', port: 3450 })
 }

@@ -41,32 +41,32 @@ function isExtSupport(path, exts) {
 }
 
 function getDepcruise(params) {
-  console.log(params)
   const { rootPath, aliasPath } = params
+  const exePath = process.cwd()
+  let absPath = path.resolve(exePath, rootPath)
+  console.log(absPath)
   const alias = aliasPath ? require(aliasPath) : {}
-  console.log(alias)
   const exts = ['js', 'ts', 'jsx', 'tsx', 'vue']
-  console.log([rootPath])
-  let dependencies = depcruise([rootPath], {
-    exclude: /node_modules/
+  let dependencies = depcruise([absPath], {
+    exclude: /(node_modules)|(__tests?__)/
   })
 
-  let dirtrees = dirtree(rootPath, {
+  let dirtrees = dirtree(absPath, {
     extensions: /\.(js|jsx|vue|ts|tsx)$/,
-    exclude: /node_modules/
+    exclude: /(node_modules)|(__tests?__)|(\/\..*)/
   })
   let fileList = getFileList(dirtrees)
   let aliasModules = []
   dependencies.modules = dependencies.modules.map(v => {
-    if (v.source.startsWith('.')) {
-      v.source = path.resolve(__dirname, '../', v.source)
-    }
+    // if (v.source.startsWith('.')) {
+      v.source = path.resolve(exePath, v.source)
+    // }
     v.dependencies = v.dependencies
       .filter(dv => !dv.coreModule)
       .map(dv => {
-        if (dv.resolved.startsWith('.')) {
-          dv.resolved = path.resolve(__dirname, '../', dv.resolved)
-        }
+        // if (dv.resolved.startsWith('.')) {
+          dv.resolved = path.resolve(exePath, dv.resolved)
+        // }
         if (dv.dependencyTypes && dv.dependencyTypes[0] === 'unknown') {
           let aliasName = dv.module.split(path.sep)[0]
           let aliasValue = alias[aliasName]

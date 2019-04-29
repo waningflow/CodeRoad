@@ -14,10 +14,11 @@ program
 // console.log(program.port)
 // console.log(program.dir)
 
-const dirPath = path.resolve(process.cwd(), program.dir)
+// const dirPath = path.resolve(process.cwd(), program.dir)
+const dir = program.dir
 const port = program.port
 
-up({ dirPath, port })
+up({ dir, port })
 
 let url = `http://localhost:${port}`
 console.log(url)

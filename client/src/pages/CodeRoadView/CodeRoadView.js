@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Input from '@material-ui/core/Input'
 import TextField from '@material-ui/core/TextField'
 import InputBase from '@material-ui/core/InputBase'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import NumInput from '../../components/NumInput'
 
@@ -30,7 +31,8 @@ export default class CodeRoadView extends Component {
       startFileLocked: false,
       startFileLockPath: '',
       editorWidth: window.innerWidth * 0.4,
-      depLevel: 3
+      depLevel: 3,
+      showDependent: false
     }
 
     this.fileContent = {}
@@ -178,7 +180,8 @@ export default class CodeRoadView extends Component {
       startFileLocked,
       startNodePath,
       editorWidth,
-      depLevel
+      depLevel,
+      showDependent
     } = this.state
 
     return (
@@ -189,35 +192,57 @@ export default class CodeRoadView extends Component {
         >
           <svg ref={element => (this.svg = element)} />
           <div className="CoadRoadToolsBar">
-            <Switch
-              checked={showCodeboard}
-              onChange={this.handleChangeSwitch('showCodeboard')}
-              value="showCodeboard"
-            />
+            <Tooltip title="Toggle editor" placement="left">
+              <Switch
+                checked={showCodeboard}
+                onChange={this.handleChangeSwitch('showCodeboard')}
+                value="showCodeboard"
+              />
+            </Tooltip>
+            <Tooltip
+              title={showDependent ? 'Show dependencies' : 'Show dependents'}
+              placement="left"
+            >
+              <Switch
+                checked={showDependent}
+                onChange={this.handleChangeSwitch('showDependent')}
+                value="showDependent"
+              />
+            </Tooltip>
             {startFileLocked ? (
-              <IconButton
-                color="secondary"
-                style={{ fontSize: '30px', cursor: 'pointer' }}
-                onClick={this.handleClickLock('unlock')}
-              >
-                <LockIcon />
-              </IconButton>
+              <Tooltip title="Unlock starter file" placement="left">
+                <IconButton
+                  color="secondary"
+                  style={{ fontSize: '30px', cursor: 'pointer' }}
+                  onClick={this.handleClickLock('unlock')}
+                >
+                  <LockIcon />
+                </IconButton>
+              </Tooltip>
             ) : (
-              <IconButton
-                color="secondary"
-                style={{ fontSize: '30px', cursor: 'pointer' }}
-                onClick={this.handleClickLock('lock')}
-                disabled={!startNodePath}
-              >
-                <LockOpenIcon />
-              </IconButton>
+              <Tooltip title="Lock starter file" placement="left">
+                <div>
+                  <IconButton
+                    color="secondary"
+                    style={{ fontSize: '30px', cursor: 'pointer' }}
+                    onClick={this.handleClickLock('lock')}
+                    disabled={!startNodePath}
+                  >
+                    <LockOpenIcon />
+                  </IconButton>
+                </div>
+              </Tooltip>
             )}
-            <NumInput
-              value={depLevel}
-              min={1}
-              max={10}
-              onChange={this.handleChangeDepLevel}
-            />
+            <Tooltip title="Change depth" placement="left">
+              <div>
+                <NumInput
+                  value={depLevel}
+                  min={1}
+                  max={10}
+                  onChange={this.handleChangeDepLevel}
+                />
+              </div>
+            </Tooltip>
           </div>
         </div>
         {showCodeboard && (

@@ -408,9 +408,8 @@ export default class ChartController {
       // let depNds = []
       startNd.dependencies.forEach(nv => {
         depNodes.push(
-          edgeNodes.find(ev => nv.resolved.startsWith(ev.data.path))
+          edgeNodes.find(ev => nv.startsWith(ev.data.path))
         )
-        // depNds.push(depCruise[nv.resolved])
       })
       depNodes = depNodes.filter(Boolean)
 

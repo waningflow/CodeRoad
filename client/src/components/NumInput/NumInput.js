@@ -11,7 +11,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: '5px'
+    borderRadius: '22px'
   },
   inputNumber: {
     color: '#fff',
@@ -60,7 +60,7 @@ function NumInput(props: Props) {
         onClick={() => handleChange(-1)}
         disabled={inputNumber === min}
       >
-        <RemoveIcon />
+        <RemoveIcon fontSize="small" />
       </IconButton>
     </div>
   )

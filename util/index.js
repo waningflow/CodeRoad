@@ -18,7 +18,7 @@ function attachDep(tree, modules) {
   if (tree.type === 'file') {
     tree.dependencies = []
     if (modules[tree.path]) {
-      tree.dependencies = modules[tree.path].dependencies.map(v => v.resolved)
+      tree.dependencies = modules[tree.path].dependencies.slice()
     }
   } else if (tree.type === 'directory') {
     let deps = tree.children.reduce((pre, cur) => {
@@ -76,9 +76,9 @@ function getDepcruise(params) {
             aliasModules.push(dv.module)
           }
         }
-        return dv
+        return dv.resolved
       })
-      .filter(dv => isExtSupport(dv.resolved, exts))
+      .filter(dvr => isExtSupport(dvr, exts))
     return v
   })
   dependencies.modules = dependencies.modules.filter(

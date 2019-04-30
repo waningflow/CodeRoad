@@ -46,5 +46,5 @@ module.exports = {
 }
 
 if (!module.parent) {
-  up({ dirPath: '', port: 3450 })
+  up({ dir: '', port: 3450 })
 }

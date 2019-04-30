@@ -20,7 +20,10 @@ const textPadding = {
 }
 
 const nodeColor = {
-  main: '#247ba0'
+  // main: '#247ba0',
+  main: '#f3ae4b',
+  end: '#774898',
+  middle: '#00a8b5'
 }
 
 export default class ChartController {
@@ -68,7 +71,7 @@ export default class ChartController {
       d.id = i
       d._children = d.children
       d.pxwidth = pixelWidth(d.data.name, { size: 14 })
-      if (d.depth >= 1) d.children = null
+      if (d.depth >= 2) d.children = null
     })
 
     const svg = select(this.domsvg)
@@ -236,7 +239,7 @@ export default class ChartController {
       .attr('r', 2.5)
       .attr('fill', d => (d._children ? '#555' : '#999'))
 
-    nodeEnter
+    const rectNodeEnter = nodeEnter
       .append('rect')
       .attr('x', d => -(d.pxwidth + textPadding.right * 2.5))
       .attr('y', -12)
@@ -247,7 +250,15 @@ export default class ChartController {
       .attr('fill', 'none')
       .attr('stroke', '#fff')
 
-    nodeEnter
+    rectNodeEnter
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .attr('stroke', nodeColor.end)
+
+    rectNodeEnter
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .attr('stroke', nodeColor.middle)
+
+    const textNodeEnter = nodeEnter
       .append('text')
       .attr('dy', '0.31em')
       .attr('fill', '#fff')
@@ -257,6 +268,14 @@ export default class ChartController {
       .text(d => d.data.name)
       .clone(true)
       .lower()
+
+    textNodeEnter
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .attr('fill', nodeColor.end)
+
+    textNodeEnter
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .attr('fill', nodeColor.middle)
 
     const nodeUpdate = node
       .merge(nodeEnter)
@@ -272,7 +291,15 @@ export default class ChartController {
       .attr('fill', 'none')
 
     rectNodeUpdate
-      .filter(d => self.clickNode === d.data.path && d.data.type == 'file')
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .attr('stroke', nodeColor.end)
+
+    rectNodeUpdate
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .attr('stroke', nodeColor.middle)
+
+    rectNodeUpdate
+      .filter(d => self.clickNode === d.data.path && d.data.type === 'file')
       .attr('stroke', nodeColor.main)
       .attr('stroke-width', 2)
 
@@ -284,7 +311,15 @@ export default class ChartController {
     const textNodeUpdate = nodeUpdate.selectAll('text').attr('fill', '#fff')
 
     textNodeUpdate
-      .filter(d => self.clickNode === d.data.path && d.data.type == 'file')
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .attr('fill', nodeColor.end)
+
+    textNodeUpdate
+      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .attr('fill', nodeColor.middle)
+
+    textNodeUpdate
+      .filter(d => self.clickNode === d.data.path && d.data.type === 'file')
       .attr('fill', nodeColor.main)
 
     textNodeUpdate

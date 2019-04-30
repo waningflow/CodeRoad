@@ -71,7 +71,7 @@ export default class ChartController {
       d.id = i
       d._children = d.children
       d.pxwidth = pixelWidth(d.data.name, { size: 14 })
-      if (d.depth >= 2) d.children = null
+      if (d.depth >= 1) d.children = null
     })
 
     const svg = select(this.domsvg)
@@ -234,10 +234,10 @@ export default class ChartController {
         self.update(d)
       })
 
-    nodeEnter
-      .append('circle')
-      .attr('r', 2.5)
-      .attr('fill', d => (d._children ? '#555' : '#999'))
+    // nodeEnter
+    // .append('circle')
+    // .attr('r', 2.5)
+    // .attr('fill', d => (d._children ? '#555' : '#999'))
 
     const rectNodeEnter = nodeEnter
       .append('rect')
@@ -451,17 +451,19 @@ export default class ChartController {
     const curve = 20
     const size = 5
     return `
-      M${d.source.y},${d.source.x + gap}
-      C${d.source.y + base + d.depCount * 50},${d.source.x + gap}
-       ${d.source.y + base + d.depCount * 50},${d.source.x + gap}
-       ${d.source.y + base + d.depCount * 50},${d.source.x + gap - curve * sig}
-      V${d.target.x + curve * sig}
-      C${d.source.y + base + d.depCount * 50},${d.target.x}
-       ${d.source.y + base + d.depCount * 50},${d.target.x}
-       ${d.target.y},${d.target.x}
-      M${d.target.y + size * 2},${d.target.x - size}
-      L${d.target.y},${d.target.x}
-      L${d.target.y + size * 2},${d.target.x + size}
+      M${d.source.y},${d.source.x + gap / 2}
+      C${d.source.y + base + d.depCount * 50},${d.source.x + gap / 2}
+       ${d.source.y + base + d.depCount * 50},${d.source.x + gap / 2}
+       ${d.source.y + base + d.depCount * 50},${d.source.x +
+      gap / 2 -
+      curve * sig}
+      V${d.target.x - gap / 2 + curve * sig}
+      C${d.source.y + base + d.depCount * 50},${d.target.x - gap / 2}
+       ${d.source.y + base + d.depCount * 50},${d.target.x - gap / 2}
+       ${d.target.y},${d.target.x - gap / 2}
+      M${d.target.y + size * 2},${d.target.x - gap / 2 - size}
+      L${d.target.y},${d.target.x - gap / 2}
+      L${d.target.y + size * 2},${d.target.x - gap / 2 + size}
     `
   }
 }

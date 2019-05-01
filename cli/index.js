@@ -4,16 +4,20 @@ const program = require('commander')
 const { up } = require('../server/index')
 
 program
+  .version('1.0.0')
   .option('-d, --dir [path]', 'The directory where the code locates', '')
   .option('-a, --alias [path]', 'The alias config file', '')
+  .option(
+    '-x, --exclude [string]',
+    'Exclude some directory',
+    val => val.split(','),
+    []
+  )
   .option('-p, --port [value]', 'The port of server', 3450)
   .parse(process.argv)
 
-const dir = program.dir
-const alias = program.alias
-const port = program.port
-
-up({ dir, alias, port })
+const { dir, alias, exclude, port } = program
+up({ dir, alias, exclude, port })
 
 let url = `http://localhost:${port}`
 console.log(url)

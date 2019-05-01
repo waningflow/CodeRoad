@@ -7,18 +7,18 @@ const fs = require('fs')
 const path = require('path')
 
 function up(params) {
-  const { dir, alias, port } = params
+  const { dir, alias, exclude, port } = params
   const app = new Koa()
   const router = new Router()
 
   app.use(cors())
 
   router.get('/depcruise', (ctx, next) => {
-    // let pt = glob.sync(dirPath, {cwd:process.cwd()})
     try {
       ctx.body = getDepcruise({
         rootPath: dir,
-        aliasPath: alias
+        aliasPath: alias,
+        excludePattern: exclude
       })
     } catch (e) {
       console.log(e)
@@ -46,5 +46,5 @@ module.exports = {
 }
 
 if (!module.parent) {
-  up({ dir: '', port: 3450 })
+  up({ dir: '', alias: '', exclude: [], port: 3450 })
 }

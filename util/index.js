@@ -2,6 +2,9 @@ const depcruise = require('dependency-cruiser').cruise
 const dirtree = require('directory-tree')
 const path = require('path')
 
+const defaultExcludePattern = ['node_modules', '__tests?__', 'dist', '\\/\\..*']
+const defaultAllowExt = ['js', 'ts', 'jsx', 'tsx', 'vue']
+
 function getFileList(tree) {
   let rtn = []
   if (tree.type === 'file') {
@@ -23,12 +26,15 @@ function attachDep(tree, modules) {
       tree.dependents = modules[tree.path].dependents.slice()
     }
   } else if (tree.type === 'directory') {
-    let deps = tree.children.reduce((pre, cur) => {
-      attachDep(cur, modules)
-      pre.dependencies = pre.dependencies.concat(cur.dependencies)
-      pre.dependents = pre.dependents.concat(cur.dependents)
-      return pre
-    }, {dependencies: [], dependents: []})
+    let deps = tree.children.reduce(
+      (pre, cur) => {
+        attachDep(cur, modules)
+        pre.dependencies = pre.dependencies.concat(cur.dependencies)
+        pre.dependents = pre.dependents.concat(cur.dependents)
+        return pre
+      },
+      { dependencies: [], dependents: [] }
+    )
     tree.dependencies = deps.dependencies.filter(v => !v.startsWith(tree.path))
     tree.dependents = deps.dependents.filter(v => !v.startsWith(tree.path))
     tree.path += '/'
@@ -45,18 +51,24 @@ function isExtSupport(path, exts) {
 }
 
 function getDepcruise(params) {
-  const { rootPath, aliasPath } = params
+  const { rootPath, aliasPath, excludePattern } = params
   const exePath = process.cwd()
   let absPath = path.resolve(exePath, rootPath)
   const alias = aliasPath ? require(path.resolve(exePath, aliasPath)) : {}
-  const exts = ['js', 'ts', 'jsx', 'tsx', 'vue']
+  const exts = defaultAllowExt.slice()
+  const exclude = defaultExcludePattern
+    .concat(excludePattern)
+    .map(v => `(${v})`)
+    .join('|')
+  const excludeReg = new RegExp(exclude)
+  const extReg = new RegExp(`\\.(${exts.join('|')})$`)
   let dependencies = depcruise([absPath], {
-    exclude: /(node_modules)|(__tests?__)/
+    exclude: excludeReg
   })
 
   let dirtrees = dirtree(absPath, {
-    extensions: /\.(js|jsx|vue|ts|tsx)$/,
-    exclude: /(node_modules)|(__tests?__)|(\/\..*)/
+    extensions: extReg,
+    exclude: excludeReg
   })
   let fileList = getFileList(dirtrees)
   let aliasModules = []
@@ -101,7 +113,7 @@ function getDepcruise(params) {
   dependencies.modules.forEach(v => {
     modules[v.source].dependencies = v.dependencies.slice()
     v.dependencies.forEach(dv => {
-      if(modules[dv]){
+      if (modules[dv]) {
         modules[dv].dependents.push(v.source)
       }
     })

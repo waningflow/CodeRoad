@@ -1,4 +1,5 @@
-import { select, event, zoom } from 'd3'
+import { select, event } from 'd3-selection'
+import { zoom } from 'd3-zoom'
 import { hierarchy, cluster } from 'd3-hierarchy'
 import pixelWidth from 'string-pixel-width'
 

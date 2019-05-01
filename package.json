@@ -1,6 +1,6 @@
 {
   "name": "coderoad",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "source code analysis, both structure and detail.",
   "keywords": [
     "code",
@@ -32,7 +32,9 @@
     "@material-ui/icons": "^3.0.2",
     "axios": "^0.18.0",
     "commander": "^2.20.0",
-    "d3": "^5.9.2",
+    "d3-hierarchy": "^1.1.8",
+    "d3-selection": "^1.4.0",
+    "d3-zoom": "^1.7.3",
     "dependency-cruiser": "4.16.1",
     "directory-tree": "^2.2.1",
     "koa": "^2.7.0",

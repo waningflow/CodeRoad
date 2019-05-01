@@ -13,6 +13,10 @@
 ```
 npm install -g coderoad
 ```
+或者使用yarn
+```
+yarn global add coderoad
+```
 
 ## 用法
 

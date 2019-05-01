@@ -1,6 +1,6 @@
 {
   "name": "coderoad",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "source code analysis, both structure and detail.",
   "keywords": [
     "code",
@@ -58,6 +58,7 @@
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "babel-preset-flow": "^6.23.0",
+    "clean-webpack-plugin": "^2.0.1",
     "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.12.4",

@@ -21,9 +21,13 @@ const textPadding = {
 
 const nodeColor = {
   // main: '#247ba0',
-  main: '#f3ae4b',
+  // start: '#f3ae4b',
   end: '#774898',
-  middle: '#00a8b5'
+  // middle: '#00a8b5'
+  main: '#e16262',
+  start: '#fabc60',
+  middle: '#3a9679',
+  // end: '#11144c'
 }
 
 export default class ChartController {
@@ -72,6 +76,7 @@ export default class ChartController {
       d.id = i
       d._children = d.children
       d.pxwidth = pixelWidth(d.data.name, { size: 14 })
+      d.nodetype = this.getNodeType(d)
       if (d.depth >= 1) d.children = null
     })
 
@@ -252,21 +257,15 @@ export default class ChartController {
       .attr('stroke', '#fff')
 
     rectNodeEnter
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length === 0 &&
-          d.data.dependents.length > 0
-      )
+      .filter(d => d.nodetype === 'start')
+      .attr('stroke', nodeColor.start)
+
+    rectNodeEnter
+      .filter(d => d.nodetype === 'end')
       .attr('stroke', nodeColor.end)
 
     rectNodeEnter
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length > 0 &&
-          d.data.dependents.length > 0
-      )
+      .filter(d => d.nodetype === 'middle')
       .attr('stroke', nodeColor.middle)
 
     const textNodeEnter = nodeEnter
@@ -281,21 +280,13 @@ export default class ChartController {
       .lower()
 
     textNodeEnter
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length === 0 &&
-          d.data.dependents.length > 0
-      )
-      .attr('fill', nodeColor.end)
+      .filter(d => d.nodetype === 'start')
+      .attr('fill', nodeColor.start)
+
+    textNodeEnter.filter(d => d.nodetype === 'end').attr('fill', nodeColor.end)
 
     textNodeEnter
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length > 0 &&
-          d.data.dependents.length > 0
-      )
+      .filter(d => d.nodetype === 'middle')
       .attr('fill', nodeColor.middle)
 
     const nodeUpdate = node
@@ -312,21 +303,15 @@ export default class ChartController {
       .attr('fill', 'none')
 
     rectNodeUpdate
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length === 0 &&
-          d.data.dependents.length > 0
-      )
+      .filter(d => d.nodetype === 'start')
+      .attr('stroke', nodeColor.start)
+
+    rectNodeUpdate
+      .filter(d => d.nodetype === 'end')
       .attr('stroke', nodeColor.end)
 
     rectNodeUpdate
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length > 0 &&
-          d.data.dependents.length > 0
-      )
+      .filter(d => d.nodetype === 'middle')
       .attr('stroke', nodeColor.middle)
 
     rectNodeUpdate
@@ -342,21 +327,13 @@ export default class ChartController {
     const textNodeUpdate = nodeUpdate.selectAll('text').attr('fill', '#fff')
 
     textNodeUpdate
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length === 0 &&
-          d.data.dependents.length > 0
-      )
-      .attr('fill', nodeColor.end)
+      .filter(d => d.nodetype === 'start')
+      .attr('fill', nodeColor.start)
+
+    textNodeUpdate.filter(d => d.nodetype === 'end').attr('fill', nodeColor.end)
 
     textNodeUpdate
-      .filter(
-        d =>
-          d.data.type === 'file' &&
-          d.data.dependencies.length > 0 &&
-          d.data.dependents.length > 0
-      )
+      .filter(d => d.nodetype === 'middle')
       .attr('fill', nodeColor.middle)
 
     textNodeUpdate
@@ -427,6 +404,25 @@ export default class ChartController {
       this.clickNode.data.type === 'file' &&
       this.clickNode.data.name === d.data.name
     )
+  }
+
+  getNodeType(d) {
+    const typeDef = {
+      directory: 'directory',
+      file_0_0: 'alone',
+      file_0_1: 'start',
+      file_1_1: 'middle',
+      file_1_0: 'end'
+    }
+    let key
+    if (d.data.type === 'file') {
+      key = `file_${Math.sign(d.data.dependents.length)}_${Math.sign(
+        d.data.dependencies.length
+      )}`
+    } else {
+      key = 'directory'
+    }
+    return typeDef[key]
   }
 
   getDepLinks(edgeNodes, startNode, depLevel) {

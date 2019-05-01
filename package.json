@@ -1,7 +1,8 @@
 {
   "name": "coderoad",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "source code analysis, both structure and detail.",
+  "keywords": ["code", "dependency", "analysis"],
   "main": "index.js",
   "bin": {
     "coderoad": "./cli/index.js"

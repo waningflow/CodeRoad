@@ -26,7 +26,7 @@ const nodeColor = {
   // middle: '#00a8b5'
   main: '#e16262',
   start: '#fabc60',
-  middle: '#3a9679',
+  middle: '#3a9679'
   // end: '#11144c'
 }
 
@@ -70,12 +70,12 @@ export default class ChartController {
     root.x0 = height / 2
     root.y0 = root.dy
     cluster().nodeSize([root.dx, root.dy])(root)
-    console.log(root)
+    // console.log(root)
 
     root.descendants().forEach((d, i) => {
       d.id = i
       d._children = d.children
-      d.pxwidth = pixelWidth(d.data.name, { size: 14 })
+      d.pxwidth = pixelWidth(d.data.name, { size: 14, font: 'Helvetica' })
       d.nodetype = this.getNodeType(d)
       if (d.depth >= 1) d.children = null
     })
@@ -102,7 +102,7 @@ export default class ChartController {
           })
       )
       .append('g')
-      .style('font', '14px sans-serif')
+      .style('font', '14px Helvetica')
       .style('user-select', 'none')
       .attr('transform', `translate(0,0)`)
       .attr('transform', `translate(${root.dy},${height / 2})`)
@@ -240,16 +240,11 @@ export default class ChartController {
         self.update(d)
       })
 
-    // nodeEnter
-    // .append('circle')
-    // .attr('r', 2.5)
-    // .attr('fill', d => (d._children ? '#555' : '#999'))
-
     const rectNodeEnter = nodeEnter
       .append('rect')
-      .attr('x', d => -(d.pxwidth + textPadding.right * 2.5))
+      .attr('x', d => -(d.pxwidth + textPadding.right * 2.2))
       .attr('y', -12)
-      .attr('width', d => d.pxwidth + textPadding.right * 2.5)
+      .attr('width', d => d.pxwidth + textPadding.right * 2.2)
       .attr('height', 24)
       .attr('rx', 4)
       .attr('ry', 4)

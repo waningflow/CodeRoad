@@ -35,6 +35,7 @@ export default class CodeRoadView extends Component {
       showDependent: false
     }
 
+    this.baseUrl = process.env.NODE_ENV === 'production'?'':'http://localhost:3450/'
     this.fileContent = {}
 
     this.containerSvg
@@ -66,11 +67,9 @@ export default class CodeRoadView extends Component {
     if (!node) {
       return
     }
-    // console.log(node)
-    // console.log(startNode)
+
     if (node.data.type === 'file') {
       if (this.editor) {
-        console.log('file change')
         this.editor.editor.gotoLine(1)
       }
       if (!this.fileContent[node.data.path]) {
@@ -91,7 +90,6 @@ export default class CodeRoadView extends Component {
     }
 
     if (startNode) {
-      console.log(startNode.data.path)
       this.setState({
         startNodePath: startNode.data.path
       })
@@ -106,7 +104,7 @@ export default class CodeRoadView extends Component {
     try {
       let options = {
         method: 'GET',
-        url: 'http://localhost:3450/file',
+        url: this.baseUrl + 'file',
         params: {
           filepath: filepath
         }
@@ -124,9 +122,8 @@ export default class CodeRoadView extends Component {
         ['depcruise'].map(async v => {
           let res = await axios({
             method: 'GET',
-            url: `http://localhost:3450/${v}`
+            url: this.baseUrl + v
           })
-          console.log(res)
           return res.data
         })
       )
@@ -148,7 +145,6 @@ export default class CodeRoadView extends Component {
       },
       () => {
         if (this.editor) {
-          console.log('editor change')
           this.editor.editor.gotoLine(1)
         }
         if (name === 'showDependent' && this.chartCtrller) {
@@ -159,7 +155,6 @@ export default class CodeRoadView extends Component {
   }
 
   handleClickLock = type => () => {
-    console.log(type)
     let locked = Boolean(type === 'lock')
     this.setState({
       startFileLocked: locked

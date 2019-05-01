@@ -13,3 +13,35 @@
 ```
 npm install -g coderoad
 ```
+
+## 用法
+
+进到项目根目录，然后执行命令即可
+```
+cd <dir>
+coderoad
+```
+当然也可以手动指定项目路径
+```
+coderoad -d <dir>
+```
+可以排除若干目录
+```
+coderoad -x <ecludeDir1>,<exlcudeDir2>
+```
+可以指定alias配置文件
+```
+coderoad -a <path-to-alias-config>
+```
+以vue项目为例（vue自带了alias配置，位于`./scripts/alias.js`）
+```
+cd <path-to-vue>
+coderoad -d src -a scripts/alias.js 
+```
+## 参数
+
+参数  |   描述
+------|--------
+`-d`,`--dir` | 指定项目路径
+`-x`,`--exclude` | 排除若干目录
+`-a`,`--alias` | 指定alias配置文件

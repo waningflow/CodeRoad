@@ -28,12 +28,13 @@ const nodeColor = {
 
 export default class ChartController {
   constructor(props) {
-    const { domsvg, dirTree, depCruise, size, depLevel } = props
+    const { domsvg, dirTree, depCruise, size, depLevel, showDependent } = props
     this.domsvg = domsvg
     this.dirTree = dirTree
     this.depCruise = depCruise
     this.size = size
     this.depLevel = depLevel || 3
+    this.depType = showDependent ? 'dependents' : 'dependencies'
 
     this.root = null
     this.svg = null
@@ -127,10 +128,10 @@ export default class ChartController {
     return svg.node()
   }
 
-  updateDepLevel(level = 1) {
+  updateDepConfig(level = 1, showDependent = false) {
     let l = parseInt(level)
     this.depLevel = l < 1 ? 1 : l
-    console.log(this.depLevel)
+    this.depType = showDependent ? 'dependents' : 'dependencies'
 
     let edgeNodes = this.root.descendants().filter(v => !v.children)
     this.depCount = 0
@@ -251,11 +252,21 @@ export default class ChartController {
       .attr('stroke', '#fff')
 
     rectNodeEnter
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length === 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('stroke', nodeColor.end)
 
     rectNodeEnter
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length > 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('stroke', nodeColor.middle)
 
     const textNodeEnter = nodeEnter
@@ -270,11 +281,21 @@ export default class ChartController {
       .lower()
 
     textNodeEnter
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length === 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('fill', nodeColor.end)
 
     textNodeEnter
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length > 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('fill', nodeColor.middle)
 
     const nodeUpdate = node
@@ -291,11 +312,21 @@ export default class ChartController {
       .attr('fill', 'none')
 
     rectNodeUpdate
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length === 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('stroke', nodeColor.end)
 
     rectNodeUpdate
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length > 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('stroke', nodeColor.middle)
 
     rectNodeUpdate
@@ -311,11 +342,21 @@ export default class ChartController {
     const textNodeUpdate = nodeUpdate.selectAll('text').attr('fill', '#fff')
 
     textNodeUpdate
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length === 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length === 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('fill', nodeColor.end)
 
     textNodeUpdate
-      .filter(d => d.data.type === 'file' && d.data.dependencies.length > 0)
+      .filter(
+        d =>
+          d.data.type === 'file' &&
+          d.data.dependencies.length > 0 &&
+          d.data.dependents.length > 0
+      )
       .attr('fill', nodeColor.middle)
 
     textNodeUpdate
@@ -402,14 +443,12 @@ export default class ChartController {
     let startNd = self.depCruise[startNode.data.path]
     depLevel -= 1
     // console.log(startNode)
-    if (startNd && startNd.dependencies && startNd.dependencies.length) {
+    if (startNd && startNd[self.depType] && startNd[self.depType].length) {
       self.depCount += 1
       let depNodes = []
       // let depNds = []
-      startNd.dependencies.forEach(nv => {
-        depNodes.push(
-          edgeNodes.find(ev => nv.startsWith(ev.data.path))
-        )
+      startNd[self.depType].forEach(nv => {
+        depNodes.push(edgeNodes.find(ev => nv.startsWith(ev.data.path)))
       })
       depNodes = depNodes.filter(Boolean)
 

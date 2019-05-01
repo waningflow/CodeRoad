@@ -142,14 +142,18 @@ export default class CodeRoadView extends Component {
   }
 
   handleChangeSwitch = name => event => {
+    const status = event.target.checked
     this.setState(
       {
-        [name]: event.target.checked
+        [name]: status
       },
       () => {
         if (this.editor) {
           console.log('editor change')
           this.editor.editor.gotoLine(1)
+        }
+        if (name === 'showDependent' && this.chartCtrller) {
+          this.chartCtrller.updateDepConfig(this.state.depLevel, status)
         }
       }
     )
@@ -168,7 +172,7 @@ export default class CodeRoadView extends Component {
 
   handleChangeDepLevel = level => {
     if (this.chartCtrller) {
-      this.chartCtrller.updateDepLevel(level)
+      this.chartCtrller.updateDepConfig(level, this.state.showDependent)
     }
   }
 

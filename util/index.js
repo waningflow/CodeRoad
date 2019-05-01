@@ -17,16 +17,20 @@ function getFileList(tree) {
 function attachDep(tree, modules) {
   if (tree.type === 'file') {
     tree.dependencies = []
+    tree.dependents = []
     if (modules[tree.path]) {
       tree.dependencies = modules[tree.path].dependencies.slice()
+      tree.dependents = modules[tree.path].dependents.slice()
     }
   } else if (tree.type === 'directory') {
     let deps = tree.children.reduce((pre, cur) => {
       attachDep(cur, modules)
-      pre = pre.concat(cur.dependencies)
+      pre.dependencies = pre.dependencies.concat(cur.dependencies)
+      pre.dependents = pre.dependents.concat(cur.dependents)
       return pre
-    }, [])
-    tree.dependencies = deps.filter(v => !v.startsWith(tree.path))
+    }, {dependencies: [], dependents: []})
+    tree.dependencies = deps.dependencies.filter(v => !v.startsWith(tree.path))
+    tree.dependents = deps.dependents.filter(v => !v.startsWith(tree.path))
     tree.path += '/'
   }
 }
@@ -87,11 +91,23 @@ function getDepcruise(params) {
       !v.coreModule &&
       isExtSupport(v.source, exts)
   )
-  dependencies.modules = dependencies.modules.reduce((pre, cur) => {
-    pre[cur.source] = cur
+  let modules = dependencies.modules.reduce((pre, cur) => {
+    pre[cur.source] = {
+      dependencies: [],
+      dependents: []
+    }
     return pre
   }, {})
-  attachDep(dirtrees, dependencies.modules)
+  dependencies.modules.forEach(v => {
+    modules[v.source].dependencies = v.dependencies.slice()
+    v.dependencies.forEach(dv => {
+      if(modules[dv]){
+        modules[dv].dependents.push(v.source)
+      }
+    })
+  })
+  dependencies.modules = modules
+  attachDep(dirtrees, modules)
   dependencies.dirtrees = dirtrees
   return dependencies
 }

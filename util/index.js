@@ -121,6 +121,7 @@ function getDepcruise(params) {
   dependencies.modules = modules
   attachDep(dirtrees, modules)
   dependencies.dirtrees = dirtrees
+  dependencies.basePath = absPath
   return dependencies
 }
 

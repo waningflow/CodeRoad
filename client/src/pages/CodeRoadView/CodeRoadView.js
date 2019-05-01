@@ -130,11 +130,10 @@ export default class CodeRoadView extends Component {
           return res.data
         })
       )
-      let resDir = resDep.dirtrees
-      let resDepModules = resDep.modules
       this.setState({
-        dirTree: resDir,
-        depCruise: resDepModules
+        dirTree: resDep.dirtrees,
+        depCruise: resDep.modules,
+        basePath: resDep.basePath
       })
     } catch (e) {
       console.log(e)
@@ -185,7 +184,8 @@ export default class CodeRoadView extends Component {
       startNodePath,
       editorWidth,
       depLevel,
-      showDependent
+      showDependent,
+      basePath
     } = this.state
 
     return (
@@ -280,7 +280,7 @@ export default class CodeRoadView extends Component {
           >
             {/* <div className="CodeRoadDragHandler" /> */}
             <div className="CodeRoadCodeEditor">
-              <div className="CodeRoadCodeHeader">{editorNodePath}</div>
+              <div className="CodeRoadCodeHeader">{editorNodePath.replace(basePath, '.')}</div>
               <div className="CodeRoadCodeContainer">
                 <AceEditor
                   width="100%"

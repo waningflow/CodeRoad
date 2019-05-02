@@ -8,10 +8,8 @@ import LockOpenIcon from '@material-ui/icons/LockOpen'
 import AceEditor from 'react-ace'
 import Resizable from 're-resizable'
 import IconButton from '@material-ui/core/IconButton'
-import Input from '@material-ui/core/Input'
-import TextField from '@material-ui/core/TextField'
-import InputBase from '@material-ui/core/InputBase'
 import Tooltip from '@material-ui/core/Tooltip'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 import NumInput from '../../components/NumInput'
 
@@ -32,10 +30,12 @@ export default class CodeRoadView extends Component {
       startFileLockPath: '',
       editorWidth: window.innerWidth * 0.4,
       depLevel: 3,
-      showDependent: false
+      showDependent: false,
+      completed: false
     }
 
-    this.baseUrl = process.env.NODE_ENV === 'production'?'':'http://localhost:3450/'
+    this.baseUrl =
+      process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3450/'
     this.fileContent = {}
 
     this.containerSvg
@@ -130,7 +130,8 @@ export default class CodeRoadView extends Component {
       this.setState({
         dirTree: resDep.dirtrees,
         depCruise: resDep.modules,
-        basePath: resDep.basePath
+        basePath: resDep.basePath,
+        completed: true
       })
     } catch (e) {
       console.log(e)
@@ -180,11 +181,15 @@ export default class CodeRoadView extends Component {
       editorWidth,
       depLevel,
       showDependent,
-      basePath
+      basePath,
+      completed
     } = this.state
 
     return (
       <div className="CodeRoadMainContainer">
+        {!completed && (
+          <LinearProgress color="secondary" style={{position: 'absolute', top: 0, left: 0, right: 0}}/>
+        )}
         <div
           className="CodeRoadMainChart"
           ref={ele => (this.containerSvg = ele)}
@@ -275,7 +280,9 @@ export default class CodeRoadView extends Component {
           >
             {/* <div className="CodeRoadDragHandler" /> */}
             <div className="CodeRoadCodeEditor">
-              <div className="CodeRoadCodeHeader">{editorNodePath.replace(basePath, '.')}</div>
+              <div className="CodeRoadCodeHeader">
+                {editorNodePath.replace(basePath, '.')}
+              </div>
               <div className="CodeRoadCodeContainer">
                 <AceEditor
                   width="100%"

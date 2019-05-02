@@ -44,7 +44,12 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../src/index.html')
+      template: path.resolve(__dirname, '../src/index.html'),
+      favicon: path.resolve(__dirname, '../src/coderoad-icon.png'),
+      meta: {
+        'viewport': 'width=device-width, initial-scale=1, shrink-to-fit=no',
+        'theme-color': '#000000'
+      }
     }),
     new CleanWebpackPlugin()
   ]

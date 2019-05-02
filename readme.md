@@ -63,6 +63,17 @@ coderoad -d src -a scripts/alias.js
 参数  |   描述
 ------|--------
 `-d`,`--dir` | 指定项目路径
-`-x`,`--exclude` | 排除若干目录
-`-a`,`--alias` | 指定alias配置文件
+`-x`,`--exclude` | 排除若干路径和文件, 默认排除了node_modules, \_\_tests\_\_, dist以及`.`开头的文件
+`-a`,`--alias` | 指定alias配置文件, 格式参考下方示例
 `-p`,`--port`  | 指定服务器端口，默认是`3450`
+
+alias配置文件示例
+```js
+const path = require('path')
+
+module.exports = {
+  vue: path.resolve(__dirname, 'src/platforms/web/entry-runtime-with-compiler')
+}
+```
+
+

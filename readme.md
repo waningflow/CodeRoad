@@ -2,12 +2,15 @@
 
 <p align="center"><img width="100" src="./client/src/coderoad-icon.png" alt="coderoad logo"></p>
 
+中文 | [English](./readme_en.md)
+
 ## 背景
 
-> 当你想要阅读vue或者其他优秀开源项目的源码，或者当你刚加入一个项目组需要尽快熟悉庞杂的项目代码，一定都感到非常头疼。因为其中的一个文件（模块），总是依赖于其他文件（dependencies），或者被其他文件依赖（dependents），各个模块之间形成一张巨大的网，使人非常混乱。CodeRoad基于依赖分析将这种依赖关系可视化，让你对代码的结构有更清晰直观的认识，就像看到“coderoad -- 代码之路”。
+> 当你想要阅读 vue 或者其他优秀开源项目的源码，或者当你刚加入一个项目组需要尽快熟悉庞杂的项目代码，一定都感到非常头疼。因为其中的一个文件（模块），总是依赖于其他文件（dependencies），或者被其他文件依赖（dependents），各个模块之间形成一张巨大的网，使人非常混乱。CodeRoad 基于依赖分析将这种依赖关系可视化，让你对代码的结构有更清晰直观的认识，就像看到“coderoad -- 代码之路”。
 
 ## 预览
 
+点这里查看实际效果[_live demo_](https://coderoad.waningflow.com/)
 <img src="./screenshot.png" width="1000"/>
 
 ## 描述
@@ -29,45 +32,58 @@
 ```
 npm install -g coderoad
 ```
-或者使用yarn
+
+或者使用 yarn
+
 ```
 yarn global add coderoad
 ```
 
 ## 用法
 
-进到项目根目录，然后执行命令即可
+进入项目根目录，然后执行命令即可
+
 ```
 cd <dir>
 coderoad
 ```
+
 当然也可以手动指定项目路径
+
 ```
 coderoad -d <dir>
 ```
+
 可以排除若干目录
+
 ```
 coderoad -x <ecludeDir1>,<exlcudeDir2>
 ```
-可以指定alias配置文件
+
+可以指定 alias 配置文件
+
 ```
 coderoad -a <path-to-alias-config>
 ```
-以vue项目为例（vue自带了alias配置，位于`./scripts/alias.js`）
+
+以 vue 项目为例（vue 自带了 alias 配置，位于`./scripts/alias.js`）
+
 ```
 cd <path-to-vue>
-coderoad -d src -a scripts/alias.js 
+coderoad -d src -a scripts/alias.js
 ```
+
 ## 参数
 
-参数  |   描述
-------|--------
-`-d`,`--dir` | 指定项目路径
-`-x`,`--exclude` | 排除若干路径和文件, 默认排除了node_modules, \_\_tests\_\_, dist以及`.`开头的文件
-`-a`,`--alias` | 指定alias配置文件, 格式参考下方示例
-`-p`,`--port`  | 指定服务器端口，默认是`3450`
+| 参数             | 描述                                                                               |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| `-d`,`--dir`     | 指定项目路径                                                                       |
+| `-x`,`--exclude` | 排除若干路径和文件, 默认排除了 node_modules, \_\_tests\_\_, dist 以及`.`开头的文件 |
+| `-a`,`--alias`   | 指定 alias 配置文件, 格式参考下方示例                                              |
+| `-p`,`--port`    | 指定服务器端口，默认是`3450`                                                       |
 
-alias配置文件示例
+alias 配置文件示例
+
 ```js
 const path = require('path')
 
@@ -75,5 +91,3 @@ module.exports = {
   vue: path.resolve(__dirname, 'src/platforms/web/entry-runtime-with-compiler')
 }
 ```
-
-

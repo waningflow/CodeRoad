@@ -1,7 +1,7 @@
 {
   "name": "coderoad",
-  "version": "1.0.7",
-  "description": "source code analysis, both structure and detail.",
+  "version": "1.0.8",
+  "description": "codebase viewer based on dependence analysis",
   "keywords": [
     "code",
     "dependency",

@@ -15,17 +15,18 @@ Click here to see [_live demo_](https://coderoad.waningflow.com/)
 
 ## Description
 
-- The whole interface is divided into left and right parts. On the left is a tree graph generated according to the project directory structure, and each leaf is forced to align. Dependencies are represented by arrows between the leaves. On the right is the content of the selected file, which is readable only.
+- The whole interface is divided into left and right parts. On the left it's a tree graph generated according to the project directory structure, and each leaf is forced to align. Dependencies are represented by arrows between the leaves. On the right it's the content of the selected file, which is readable only.
 - Each file has four possible states, represented by four colors.
   - Orange: Has `dependencies`. No `dependents`. Usually the entry file of the project.
   - Green: Has `dependencies`. Has `dependents`. Most files will be this state.
   - Purple: No `dependencies`. Has `dependents`. Usually the utils.
-  - White: No `dependencies`. No `dependents`. Usually some configuration files or others, and all folders are white.
+  - White: No `dependencies`. No `dependents`. Usually some configuration files or others. All folders are white.
 - There are four control options, the functions are:
   - Toggle the editor.
   - Toggle the dependence type. `show dependencies` or `show dependents`
-  - Lock starter file. If unlocked, clicking on a file switches to dependencies starting with that file. If locked, when clicking on other files, the dependencies displayed will not be switched, only the contents of the editor will be switched.
+  - Lock starter file. If unlocked, clicking on a file switches to dependence graph starting with that file. If locked, when clicking on other files, the dependence graph will not be switched, only the contents of the editor will be switched.
   - Adjusting Dependence Depth.
+- Currently supported file types: `.js`,`.jsx`,`.ts`,`.tsx`,`.vue`
 
 ## Installation
 
@@ -33,7 +34,7 @@ Click here to see [_live demo_](https://coderoad.waningflow.com/)
 npm install -g coderoad
 ```
 
-or yarn
+or with yarn
 
 ```
 yarn global add coderoad

@@ -2,7 +2,7 @@
 
 <p align="center"><img width="100" src="./client/src/coderoad-icon.png" alt="coderoad logo"></p>
 
-中文 | [English](./)
+中文 | [English](./readme.md)
 
 ## 背景
 

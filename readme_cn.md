@@ -2,6 +2,12 @@
 
 <p align="center"><img width="100" src="./client/src/coderoad-icon.png" alt="coderoad logo"></p>
 
+<p align="center">
+<a href="https://tools.waningflow.com/npm-download?packageName=coderoad"><img src="https://img.shields.io/npm/dm/coderoad.svg" alt="Downloads"></a>
+<a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/v/coderoad.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/l/coderoad.svg" alt="License"></a>
+</p>
+
 中文 | [English](https://github.com/waningflow/CodeRoad)
 
 ## 背景

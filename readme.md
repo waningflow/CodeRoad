@@ -2,6 +2,12 @@
 
 <p align="center"><img width="100" src="./client/src/coderoad-icon.png" alt="coderoad logo"></p>
 
+<p align="center">
+<a href="https://tools.waningflow.com/npm-download?packageName=coderoad"><img src="https://img.shields.io/npm/dm/coderoad.svg" alt="Downloads"></a>
+<a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/v/coderoad.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/l/coderoad.svg" alt="License"></a>
+</p>
+
 [中文](./readme_cn.md) | English
 
 ## Background
@@ -79,7 +85,7 @@ coderoad -d src -a scripts/alias.js
 | Parameter        | Description                                                                                                                                     |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `-d`,`--dir`     | Specify the project path                                                                                                                        |
-| `-x`,`--exclude` | Exclude some directory and file. The following patterns are excluded by default: node_modules, \_\_tests\_\_, dist and files begining with `.`. |
+| `-x`,`--exclude` | Exclude some directory and file. The following patterns are excluded by default: node_modules, \_\_tests\_\_, dist and items begining with `.`. |
 | `-a`,`--alias`   | Specify the alias config path.                                                                                                    |
 | `-p`,`--port`    | Specify the server port，Default`3450`                                                                                                                    |
 

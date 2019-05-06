@@ -17,7 +17,7 @@
 ## 预览
 
 点这里查看实际效果[_live demo_](https://coderoad.waningflow.com/)
-<img src="./screenshot.png" width="1000"/>
+<img src="./cr1.gif" width="1000"/>
 
 ## 描述
 

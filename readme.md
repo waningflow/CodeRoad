@@ -17,7 +17,7 @@
 ## Preview
 
 Click here to see [_live demo_](https://coderoad.waningflow.com/)
-<img src="./screenshot.png" width="1000"/>
+<img src="./cr1.gif" width="1000"/>
 
 ## Description
 

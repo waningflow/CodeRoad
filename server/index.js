@@ -13,13 +13,18 @@ function up(params) {
 
   app.use(cors())
 
+  let depData
+  let fileData = {}
   router.get('/depcruise', (ctx, next) => {
     try {
-      ctx.body = getDepcruise({
-        rootPath: dir,
-        aliasPath: alias,
-        excludePattern: exclude
-      })
+      depData =
+        depData ||
+        getDepcruise({
+          rootPath: dir,
+          aliasPath: alias,
+          excludePattern: exclude
+        })
+      ctx.body = depData
     } catch (e) {
       console.log(e)
       next(e)
@@ -28,7 +33,14 @@ function up(params) {
 
   router.get('/file', (ctx, next) => {
     try {
-      let content = fs.readFileSync(ctx.query.filepath)
+      let filePath = ctx.query.filepath
+      let content
+      if(fileData[filePath]){
+        content = fileData[filePath]
+      }else{
+        content = fs.readFileSync(filePath)
+        fileData[filePath] = content
+      }
       ctx.body = content
     } catch (e) {
       next(e)

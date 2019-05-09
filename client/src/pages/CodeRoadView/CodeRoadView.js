@@ -48,7 +48,12 @@ export default class CodeRoadView extends Component {
 
   componentDidUpdate() {
     const { dirTree, depCruise } = this.state
-    if (!this.chartCtrller && this.svg && this.containerSvg) {
+    if (
+      !this.chartCtrller &&
+      this.svg &&
+      this.containerSvg &&
+      dirTree.hasOwnProperty('name')
+    ) {
       let size = this.containerSvg.getBoundingClientRect()
       this.chartCtrller = new ChartController({
         domsvg: this.svg,
@@ -120,10 +125,16 @@ export default class CodeRoadView extends Component {
     try {
       let [resDep] = await Promise.all(
         ['depcruise'].map(async v => {
-          let res = await axios({
+          let options = {
             method: 'GET',
             url: this.baseUrl + v
-          })
+          }
+          if (this.props.name) {
+            options.params = {
+              name: this.props.name
+            }
+          }
+          let res = await axios(options)
           return res.data
         })
       )
@@ -188,7 +199,10 @@ export default class CodeRoadView extends Component {
     return (
       <div className="CodeRoadMainContainer">
         {!completed && (
-          <LinearProgress color="secondary" style={{position: 'absolute', top: 0, left: 0, right: 0}}/>
+          <LinearProgress
+            color="secondary"
+            style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+          />
         )}
         <div
           className="CodeRoadMainChart"
@@ -247,7 +261,7 @@ export default class CodeRoadView extends Component {
                 />
               </div>
             </Tooltip>
-            <div style={{'flexGrow': 1}}></div>
+            <div style={{ flexGrow: 1 }} />
             <a href="https://github.com/waningflow/CodeRoad" target="blank">
               <IconButton aria-label="Github" color="secondary">
                 <SvgIcon style={{ color: '#000' }}>

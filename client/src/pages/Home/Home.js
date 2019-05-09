@@ -1,0 +1,166 @@
+import React, { Component } from 'react'
+// import Paper from '@material-ui/core/Paper'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
+import OutlinedInput from '@material-ui/core/OutlinedInput'
+import IconButton from '@material-ui/core/IconButton'
+import Fab from '@material-ui/core/Fab'
+import NavigationIcon from '@material-ui/icons/Navigation'
+import Dialog from '@material-ui/core/Dialog'
+import CloseIcon from '@material-ui/icons/Close'
+import Slide from '@material-ui/core/Slide'
+import CodeRoadView from '../CodeRoadView/CodeRoadView'
+import axios from 'axios'
+
+const styles = {
+  bg: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: '#e16262',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  main: {
+    color: '#fff',
+    fontSize: '25px',
+    // border: '1px solid #fff',
+    width: '600px',
+    height: '400px',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  logo: {
+    width: '100px',
+    height: '100px',
+    backgroundSize: '100% 100%',
+    backgroundImage: 'url(/coderoad-icon.png)',
+    cursor: 'pointer'
+    // position: 'relative',
+  },
+  logoText: {
+    // position: 'absolute',
+    // bottom: '-30px'
+    cursor: 'pointer',
+    fontWeight: 800
+  }
+}
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />
+}
+
+export default class Home extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      open: false,
+      projectName: '',
+      projectList: ['vue', 'react']
+    }
+    this.baseUrl =
+      process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3450/'
+
+    this.initData()
+  }
+
+  async initData() {
+    try {
+      let res = await axios.get(`${this.baseUrl}projectlist`)
+      let projectList = res.data.map(v => v.name)
+      this.setState({
+        projectList
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value })
+  }
+
+  handleClickOpen = () => {
+    this.setState({ open: true })
+  }
+
+  handleClose = () => {
+    this.setState({ open: false })
+  }
+
+  renderDialog() {
+    return (
+      <Dialog
+        fullScreen
+        open={this.state.open}
+        onClose={this.handleClose}
+        TransitionComponent={Transition}
+      >
+        <CodeRoadView name={this.state.projectName} />
+        <div style={{ position: 'absolute', top: 0, left: 0 }}>
+          <IconButton
+            color="inherit"
+            onClick={this.handleClose}
+            aria-label="Close"
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </Dialog>
+    )
+  }
+
+  render() {
+    return (
+      <div style={styles.bg}>
+        <div style={styles.main}>
+          <div style={styles.logo} />
+          <div style={styles.logoText}>CodeRoad</div>
+          <div style={{ marginTop: '80px' }}>
+            <Select
+              style={{ width: '200px', color: '#fff' }}
+              value={this.state.projectName}
+              onChange={this.handleChange}
+              input={
+                <OutlinedInput
+                  labelWidth={0}
+                  name="projectName"
+                  id="outlined-age-simple"
+                />
+              }
+            >
+              {this.state.projectList.map(v => (
+                <MenuItem value={v} key={v}>
+                  {v}
+                </MenuItem>
+              ))}
+            </Select>
+            <Fab
+              variant="extended"
+              aria-label="Delete"
+              color="primary"
+              style={{ marginLeft: '15px' }}
+              onClick={this.handleClickOpen}
+            >
+              <NavigationIcon />
+              Go
+            </Fab>
+            {/* <IconButton
+              color="secondary"
+              style={{ fontSize: '50px', cursor: 'pointer' }}
+              // onClick={this.handleClickLock('unlock')}
+            >
+              <VisibilityIcon />
+            </IconButton> */}
+          </div>
+        </div>
+        {this.renderDialog()}
+      </div>
+    )
+  }
+}

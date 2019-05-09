@@ -123,7 +123,7 @@ export default class Home extends Component {
           name={this.state.projectName}
           onError={this.handleError}
         />
-        <div style={{ position: 'absolute', top: '6px', left: '6px' }}>
+        <div style={{ position: 'absolute', top: '6px', left: '6px' ,color: '#aaa'}}>
           <IconButton
             color="inherit"
             onClick={this.handleClose}

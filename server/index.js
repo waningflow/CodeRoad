@@ -8,7 +8,7 @@ const fs = require('fs')
 const path = require('path')
 const ProjectList = require('./projectList')
 
-const ProjectDir = path.resolve(__dirname, '../../')
+const ProjectDir = path.resolve(__dirname, '../../' + (process.env.NODE_ENV === 'production'?'github':'') )
 
 function up(params) {
   const { dir, alias, exclude, port } = params

@@ -45,6 +45,7 @@
     "react": "^16.8.6",
     "react-ace": "^6.5.0",
     "react-dom": "^16.8.6",
+    "react-ga": "^2.5.7",
     "string-pixel-width": "^1.9.0"
   },
   "devDependencies": {

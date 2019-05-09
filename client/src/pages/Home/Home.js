@@ -12,6 +12,7 @@ import Slide from '@material-ui/core/Slide'
 import CodeRoadView from '../CodeRoadView/CodeRoadView'
 import axios from 'axios'
 import Snackbar from '@material-ui/core/Snackbar'
+import ReactGA from 'react-ga'
 
 const styles = {
   bg: {
@@ -95,6 +96,11 @@ export default class Home extends Component {
 
   handleClickOpen = () => {
     this.setState({ open: true })
+    ReactGA.event({
+      category: 'Home',
+      action: 'Click Go',
+      value: this.state.projectName
+    })
   }
 
   handleClose = () => {
@@ -117,7 +123,7 @@ export default class Home extends Component {
           name={this.state.projectName}
           onError={this.handleError}
         />
-        <div style={{ position: 'absolute', top: 0, left: 0 }}>
+        <div style={{ position: 'absolute', top: '6px', left: '6px' }}>
           <IconButton
             color="inherit"
             onClick={this.handleClose}
@@ -141,9 +147,11 @@ export default class Home extends Component {
   renderSnackbar() {
     return (
       <Snackbar
-        style={{
-          // backgroundColor: '#ffa000'
-        }}
+        style={
+          {
+            // backgroundColor: '#ffa000'
+          }
+        }
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'

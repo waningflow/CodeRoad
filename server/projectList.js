@@ -7,5 +7,9 @@ module.exports = [
   {
     name: 'react',
     src: './packages'
+  },
+  {
+    name: 'vuex',
+    src: './src'
   }
 ]

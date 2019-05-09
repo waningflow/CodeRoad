@@ -8,7 +8,7 @@ const fs = require('fs')
 const path = require('path')
 const ProjectList = require('./projectList')
 
-const ProjectDir = path.resolve(__dirname, '../../github/')
+const ProjectDir = path.resolve(__dirname, '../../')
 
 function up(params) {
   const { dir, alias, exclude, port } = params

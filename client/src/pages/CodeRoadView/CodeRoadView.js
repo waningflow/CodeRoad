@@ -146,6 +146,12 @@ export default class CodeRoadView extends Component {
       })
     } catch (e) {
       console.log(e)
+      this.setState({
+        completed: true
+      })
+      if(this.props.onError){
+        this.props.onError()
+      }
     }
   }
 

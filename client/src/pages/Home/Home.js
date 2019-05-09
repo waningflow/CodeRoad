@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import Slide from '@material-ui/core/Slide'
 import CodeRoadView from '../CodeRoadView/CodeRoadView'
 import axios from 'axios'
+import Snackbar from '@material-ui/core/Snackbar'
 
 const styles = {
   bg: {
@@ -47,6 +48,11 @@ const styles = {
     // bottom: '-30px'
     cursor: 'pointer',
     fontWeight: 800
+  },
+  link: {
+    textDecoration: 'none',
+    color: '#fff',
+    fontFamily: 'monospace'
   }
 }
 
@@ -59,6 +65,7 @@ export default class Home extends Component {
     super()
 
     this.state = {
+      snackopen: false,
       open: false,
       projectName: '',
       projectList: ['vue', 'react']
@@ -77,6 +84,7 @@ export default class Home extends Component {
         projectList
       })
     } catch (e) {
+      this.setState({ snackopen: true })
       console.log(e)
     }
   }
@@ -93,6 +101,10 @@ export default class Home extends Component {
     this.setState({ open: false })
   }
 
+  handleError = () => {
+    this.setState({ snackopen: true })
+  }
+
   renderDialog() {
     return (
       <Dialog
@@ -101,7 +113,10 @@ export default class Home extends Component {
         onClose={this.handleClose}
         TransitionComponent={Transition}
       >
-        <CodeRoadView name={this.state.projectName} />
+        <CodeRoadView
+          name={this.state.projectName}
+          onError={this.handleError}
+        />
         <div style={{ position: 'absolute', top: 0, left: 0 }}>
           <IconButton
             color="inherit"
@@ -115,12 +130,49 @@ export default class Home extends Component {
     )
   }
 
+  handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ snackopen: false })
+  }
+
+  renderSnackbar() {
+    return (
+      <Snackbar
+        style={{
+          // backgroundColor: '#ffa000'
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        open={this.state.snackopen}
+        autoHideDuration={6000}
+        onClose={this.handleCloseSnack}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={<span id="message-id">Something went wrong...try again</span>}
+      />
+    )
+  }
+
   render() {
     return (
       <div style={styles.bg}>
         <div style={styles.main}>
-          <div style={styles.logo} />
-          <div style={styles.logoText}>CodeRoad</div>
+          <a href="https://github.com/waningflow/CodeRoad/" target="blank">
+            <div style={styles.logo} />
+          </a>
+          <a
+            href="https://github.com/waningflow/CodeRoad/"
+            target="blank"
+            style={styles.link}
+          >
+            <div style={styles.logoText}>CodeRoad</div>
+          </a>
           <div style={{ marginTop: '80px' }}>
             <Select
               style={{ width: '200px', color: '#fff' }}
@@ -160,6 +212,7 @@ export default class Home extends Component {
           </div>
         </div>
         {this.renderDialog()}
+        {this.renderSnackbar()}
       </div>
     )
   }

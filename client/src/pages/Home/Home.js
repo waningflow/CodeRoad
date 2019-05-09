@@ -99,7 +99,7 @@ export default class Home extends Component {
     ReactGA.event({
       category: 'Home',
       action: 'Click Go',
-      value: this.state.projectName
+      label: this.state.projectName
     })
   }
 

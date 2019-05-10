@@ -50,6 +50,12 @@ const styles = {
     cursor: 'pointer',
     fontWeight: 800
   },
+  descText: {
+    marginTop: '15px',
+    color: '#ffffff60',
+    fontSize: '20px',
+    fontFamily: 'monospace'
+  },
   link: {
     textDecoration: 'none',
     color: '#fff',
@@ -181,6 +187,7 @@ export default class Home extends Component {
           >
             <div style={styles.logoText}>CodeRoad</div>
           </a>
+          <div style={styles.descText}>Read code with visualized structure</div>
           <div style={{ marginTop: '80px' }}>
             <Select
               style={{ width: '200px', color: '#fff' }}
@@ -208,7 +215,7 @@ export default class Home extends Component {
               onClick={this.handleClickOpen}
             >
               <NavigationIcon />
-              Go
+              Start
             </Fab>
             {/* <IconButton
               color="secondary"

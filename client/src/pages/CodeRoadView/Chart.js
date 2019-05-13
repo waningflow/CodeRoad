@@ -135,9 +135,13 @@ export default class ChartController {
   }
 
   updateDepConfig(level = 1, showDependent = false) {
+    console.log(level)
+    console.log(showDependent)
     let l = parseInt(level)
     this.depLevel = l < 1 ? 1 : l
     this.depType = showDependent ? 'dependents' : 'dependencies'
+
+    console.log(this.depLevel)
 
     let edgeNodes = this.root.descendants().filter(v => !v.children)
     this.depCount = 0

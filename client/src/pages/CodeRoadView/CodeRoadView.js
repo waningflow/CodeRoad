@@ -47,20 +47,21 @@ export default class CodeRoadView extends Component {
   componentDidMount() {}
 
   componentDidUpdate() {
-    const { dirTree, depCruise } = this.state
+    const { dirTree, depCruise, depLevel } = this.state
     if (
       !this.chartCtrller &&
       this.svg &&
       this.containerSvg &&
       dirTree.hasOwnProperty('name')
     ) {
+      console.log('update')
       let size = this.containerSvg.getBoundingClientRect()
       this.chartCtrller = new ChartController({
         domsvg: this.svg,
         dirTree: dirTree,
         depCruise: depCruise,
         size: size,
-        depLevel: 3
+        depLevel: depLevel
       })
       this.chartCtrller.initCollapseClusterChart()
       this.chartCtrller.onEvent('clickNode', this.handleClickNode.bind(this))
@@ -149,7 +150,7 @@ export default class CodeRoadView extends Component {
       this.setState({
         completed: true
       })
-      if(this.props.onError){
+      if (this.props.onError) {
         this.props.onError()
       }
     }
@@ -157,6 +158,7 @@ export default class CodeRoadView extends Component {
 
   handleChangeSwitch = name => event => {
     const status = event.target.checked
+    const { depLevel } = this.state
     this.setState(
       {
         [name]: status
@@ -166,7 +168,7 @@ export default class CodeRoadView extends Component {
           this.editor.editor.gotoLine(1)
         }
         if (name === 'showDependent' && this.chartCtrller) {
-          this.chartCtrller.updateDepConfig(this.state.depLevel, status)
+          this.chartCtrller.updateDepConfig(depLevel, status)
         }
       }
     )
@@ -183,6 +185,9 @@ export default class CodeRoadView extends Component {
   }
 
   handleChangeDepLevel = level => {
+    this.setState({
+      depLevel: level
+    })
     if (this.chartCtrller) {
       this.chartCtrller.updateDepConfig(level, this.state.showDependent)
     }

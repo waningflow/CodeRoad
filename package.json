@@ -13,7 +13,9 @@
   },
   "scripts": {
     "start:client": "webpack-dev-server --config ./client/config/webpack.config.js --mode development",
+    "start:single": "webpack-dev-server --config ./client/config/webpack.single.config.js --mode development",
     "build:client": "webpack --config ./client/config/webpack.config.js --mode production",
+    "build:single": "webpack --config ./client/config/webpack.config.js --mode production",
     "start:server": "nodemon ./server/index.js"
   },
   "repository": {

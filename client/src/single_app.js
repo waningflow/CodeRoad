@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import Home from './pages/Home'
+import CodeRoadView from './pages/CodeRoadView'
 
 const theme = createMuiTheme({
   palette: {
@@ -29,7 +29,7 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>
         <div className="App">
-          <Home />
+          <CodeRoadView />
         </div>
       </MuiThemeProvider>
     )

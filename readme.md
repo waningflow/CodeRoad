@@ -6,6 +6,10 @@
 <a href="https://tools.waningflow.com/npm-download?packageName=coderoad"><img src="https://img.shields.io/npm/dm/coderoad.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/v/coderoad.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/l/coderoad.svg" alt="License"></a>
+
+</p>
+<p align="center">
+  <a href="https://www.producthunt.com/posts/coderoad?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-coderoad" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=153710&theme=light" alt="CodeRoad - A way to view code based on dependencies analysis. | Product Hunt Embed" style="width: 250px; height: 44px;" width="250px" height="44px" /></a>
 </p>
 
 [中文](./readme_cn.md) | English
@@ -86,8 +90,8 @@ coderoad -d src -a scripts/alias.js
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `-d`,`--dir`     | Specify the project path                                                                                                                        |
 | `-x`,`--exclude` | Exclude some directory and file. The following patterns are excluded by default: node_modules, \_\_tests\_\_, dist and items begining with `.`. |
-| `-a`,`--alias`   | Specify the alias config path.                                                                                                    |
-| `-p`,`--port`    | Specify the server port，Default`3450`                                                                                                                    |
+| `-a`,`--alias`   | Specify the alias config path.                                                                                                                  |
+| `-p`,`--port`    | Specify the server port，Default`3450`                                                                                                          |
 
 Example of alias config.
 

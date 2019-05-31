@@ -17,7 +17,8 @@
     "build:client": "webpack --config ./client/config/webpack.config.js --mode production",
     "build:single": "webpack --config ./client/config/webpack.single.config.js --mode production",
     "start:server": "nodemon ./server/index.js",
-    "lint": "eslint --ext .js server client/src cli"
+    "lint": "eslint --ext .js server client/src cli",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -60,8 +61,11 @@
     "@babel/preset-react": "^7.0.0",
     "@webpack-cli/init": "^0.1.5",
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.5",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-flow": "^6.23.0",
     "clean-webpack-plugin": "^2.0.1",
     "css-loader": "^2.1.1",
@@ -69,6 +73,8 @@
     "eslint-plugin-react": "^7.12.4",
     "flow-bin": "^0.97.0",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^24.8.0",
+    "regenerator-runtime": "^0.13.2",
     "style-loader": "^0.23.1",
     "typescript": "^3.4.5",
     "webpack": "^4.30.0",

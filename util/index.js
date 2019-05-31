@@ -51,6 +51,9 @@ function isExtSupport(path, exts) {
 }
 
 function getDepcruise(params) {
+  if(!params){
+    throw new Error('params is required')
+  }
   const { rootPath, aliasPath, excludePattern } = params
   const exePath = process.cwd()
   let absPath = path.resolve(exePath, rootPath)

@@ -19,6 +19,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV !== 'production' ? 0 : 2,
     'no-useless-escape': 0,
     'no-empty': 0,
-    semi: ['error', 'never']
+    semi: ['error', 'never'],
+    'react/prop-types': 0
   }
 }

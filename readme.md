@@ -6,6 +6,9 @@
 <a href="https://tools.waningflow.com/npm-download?packageName=coderoad"><img src="https://img.shields.io/npm/dm/coderoad.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/v/coderoad.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/coderoad"><img src="https://img.shields.io/npm/l/coderoad.svg" alt="License"></a>
+  <a href="https://travis-ci.com/waningflow/CodeRoad"><img src="https://travis-ci.com/waningflow/CodeRoad.svg?branch=master" alt="Travis"></a>
+  
+
 
 </p>
 <p align="center">

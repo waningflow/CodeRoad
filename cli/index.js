@@ -4,7 +4,7 @@ const program = require('commander')
 const { up } = require('../server/index')
 
 program
-  .version('1.0.8')
+  .version('1.0.11')
   .option('-d, --dir [path]', 'The directory where the code locates', '')
   .option('-a, --alias [path]', 'The alias config file', '')
   .option(

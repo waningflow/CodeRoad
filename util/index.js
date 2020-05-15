@@ -2,7 +2,7 @@ const depcruise = require('dependency-cruiser').cruise
 const dirtree = require('directory-tree')
 const path = require('path')
 
-const defaultExcludePattern = ['node_modules', '__tests?__', 'dist', '\\/\\..*']
+const defaultExcludePattern = ['node_modules', '__tests?__', 'dist'] // , '\\/\\..*']
 const defaultAllowExt = ['js', 'ts', 'jsx', 'tsx', 'vue']
 
 function getFileList(tree) {
@@ -42,6 +42,7 @@ function attachDep(tree, modules) {
 }
 
 function isExtSupport(path, exts) {
+  if (!path) return false
   for (let i = 0, l = exts.length; i < l; i++) {
     if (path.endsWith(exts[i])) {
       return true
@@ -90,7 +91,7 @@ function getDepcruise(params) {
               dv.module.slice(aliasName.length + 1)
             )
             let file = fileList.find(fv => fv.path.startsWith(dv.resolved))
-            dv.resolved = file.path
+            dv.resolved = file && file.path
             dv.dependencyTypes[0] = 'local_alias'
             aliasModules.push(dv.module)
           }
